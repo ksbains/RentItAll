@@ -1,0 +1,11 @@
+{
+  "name": "rentitall",
+  "version": "1.0.0",
+  "description": "this is a our car rental project for CMPE138",
+  "main": "RentItAll.js",
+  "dependencies": {
+    "inquirer": "^3.0.1",
+    "mysql": "^2.13.0",
+    "npm": "^6.13.0"
+  }
+}

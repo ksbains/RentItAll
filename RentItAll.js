@@ -35,6 +35,7 @@ function start() {
       if (answer.postOrBid.toUpperCase() === "EMPLOYEE") {
         //This method will handle the employee flow
         postAuction();
+        Employee();
       }
       else {
         //This method will handle the employee flow
@@ -48,40 +49,31 @@ function Employee() {
   inquirer
     .prompt([
       {
-        name: "item",
+        name: "username",
         type: "input",
-        message: "What is the item you would like to submit?"
+        message: "username"
       },
       {
-        name: "category",
+        name: "password",
         type: "input",
-        message: "What category would you like to place your auction in?"
-      },
-      {
-        name: "startingBid",
-        type: "input",
-        message: "What would you like your starting bid to be?",
-        validate: function(value) {
-          if (isNaN(value) === false) {
-            return true;
-          }
-          return false;
-        }
+        message: "password"
       }
     ])
     .then(function(answer) {
-      // when finished prompting, insert a new item into the db with that info
+      // when finished prompting, insert a new item into the db with that info\
+      on.query("SELECT username FROM employee", function (err, result, fields) {
+          if (err) throw err;
+          console.log("the employee is: " + result);
+        }
       connection.query(
         "INSERT INTO employees SET ?",
         {
-          item_name: answer.item,
-          category: answer.category,
-          starting_bid: answer.startingBid,
-          highest_bid: answer.startingBid
+          username: answer.username,
+          password: answer.password
         },
         function(err) {
           if (err) throw err;
-          console.log("Your auction was created successfully!");
+          console.log("Your employee was created successfully!");
           // re-prompt the user for if they want to bid or post
           start();
         }

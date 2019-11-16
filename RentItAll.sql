@@ -7,13 +7,12 @@ CREATE TABLE customer(
   username VARCHAR(100) NOT NULL,
   password VARCHAR(45) NOT NULL,
   name VARCHAR(100) NOT NULL,
-  P_number integer NOT NULL,
   address VARCHAR(100) NOT NULL,
   phone_number VARCHAR(100) NOT NULL,
   PRIMARY KEY (username)
 );
 
-CREATE TABLE cutomer_type(
+CREATE TABLE customer_type(
   cu_username VARCHAR(100) NOT NULL,
   type varchar(20) NOT NULL,
   PRIMARY KEY (cu_username, type),
@@ -49,7 +48,7 @@ CREATE TABLE car(
   VIN VARCHAR(100) NOT NULL,
   loc_address VARCHAR(100) NOT NULL,
   ma_ssn char(9),
-  source boolean not null,
+  source bit not null,
   purpose varchar(10) not null,
   type VARCHAR(45) NOT NULL,
   make VARCHAR(45) NOT NULL,
@@ -57,14 +56,16 @@ CREATE TABLE car(
   paint VARCHAR(45) NOT NULL,
   transmission VARCHAR(45) NOT NULL,
   mileage integer NOT NULL,
-  condition VARCHAR(45) NOT NULL,
-  year INT(4) NOT NULL,
+  conditions VARCHAR(45) NOT NULL,
+  year integer NOT NULL,
   PRIMARY KEY (VIN),
   FOREIGN KEY (loc_address) REFERENCES company_locations(address)
     on update cascade,
   FOREIGN KEY (ma_ssn) REFERENCES manager(mgr_ssn)
     on delete set null on update cascade
 );
+
+
 
 CREATE TABLE rent_out(
   cu_username VARCHAR(100) NOT NULL,
@@ -172,7 +173,7 @@ CREATE TABLE instance_of(
   cu_username varchar(100) NOT NULL,
   b_id integer NOT NULL,
   srv_name varchar(100) NOT NULL,
-  PRIMARY KEY(cu_username, b_id, srv_name),
+  PRIMARY KEY(cu_username, b_id),
   FOREIGN KEY (cu_username) REFERENCES customer(username)
     on delete cascade on update cascade,
   FOREIGN KEY (b_id) REFERENCES service_instance(b_id)

@@ -229,7 +229,7 @@ function createCustomer(){
       //do some salary logic
 
       connection.query(
-        "INSERT INTO employees SET ?",
+        "INSERT INTO customer SET ?",
         {
           username: answer.username,
           password: answer.password,
@@ -251,6 +251,9 @@ function createCustomer(){
 }
 function CustomerLogin() {
   // prompt for info about the item being put up for auction
+  var username = "kb";
+  var password = "password";
+
   inquirer
     .prompt([
       {
@@ -259,147 +262,408 @@ function CustomerLogin() {
         message: "username"
       },
       {
-        name: "SSN",
-        type: "input",
-        message: "SSN"
+        name: "password",
+        type: "password",
+        message: "password"
       }
     ])
     .then(function(answer) {
       // when finished prompting, insert a new item into the db with that info\
-      connection.query(
-        "INSERT INTO employees SET ?",
-        {
-          username: answer.username,
-          password: answer.password
-        },
-        function(err) {
-          if (err) throw err;
-          console.log("Your employee was created successfully!");
-          // re-prompt the user for if they want to bid or post
-          start();
-        }
-      );
+     if(answer.username == username && answer.password == password){
+       CustomerMain();
+     } 
     });
 }
 
 
+function CustomerMain() {
+  inquirer
+      .prompt({
+        name: "menu",
+        type: "rawlist",
+        message: "What would you like to do?",
+        choices: ["buy" , "sell", "rent" ,"rentout", "maintenance" , "review", "logout"]
+      })
+      .then(function(answer) {
+        if (answer.menu == "buy") {
+          customerBuy();  
+        } else if (answer.menu == "sell") {
+          customerSell();  
+        } else if (answer.menu == "rent") {
+          customerRent();  
+        } else if (answer.menu == "rentout") {
+          customerRentOut();  
+        } else if (answer.menu == "maintenance") {
+          customerMaintenance();
+        } else if (answer.menu == "review") {
+          customerReview();  
+        } else if (answer.menu == "logout") {
+          customerLogout();  
+        }
+      });  
+}
+function customerBuy(){
+  inquirer
+      .prompt({
+        name: "buyMenu",
+        type: "rawlist",
+        message: "what would you like to do",
+        choices: ["List cars", "Filter", "Return"]
+      })
+      .then(function(answer) {
+        if (answer.buyMenu == "List cars") {
+         console.log("these are all of the cars!")   
+         //implemnt
+        } else if(answer.buyMenu == "Filter") {
+          console.log("Filter!!!!!!");
+          //Implement
+        } else if(answer.buyMenu == "Return") {
+          CustomerMain();
+        } else{
+          console.log("oh no, not good");
+        }
+      });  
+}
 
+function customerSell(){
+  var location = "bikinin bottom";
+  var maSSN = "012345678";
+  var source = 0;
+  var purpose = "sell"
 
-
-
-
-
-
-
-
-
-////STARTER CODE:
-// function to handle posting new items up for auction
-function postAuction() {
-  // prompt for info about the item being put up for auction
   inquirer
     .prompt([
       {
-        name: "item",
+        name: "VIN",
         type: "input",
-        message: "What is the item you would like to submit?"
+        message: "VIN: "
       },
+
       {
-        name: "category",
+        name: "type",
         type: "input",
-        message: "What category would you like to place your auction in?"
+        message: "Type: "
       },
+
       {
-        name: "startingBid",
+        name: "make",
         type: "input",
-        message: "What would you like your starting bid to be?",
-        validate: function(value) {
-          if (isNaN(value) === false) {
-            return true;
-          }
-          return false;
-        }
-      }
-    ])
-    .then(function(answer) {
-      // when finished prompting, insert a new item into the db with that info
+        message: "Make: "
+      },
+
+      {
+        name: "model",
+        type: "input",
+        message: "Model: "
+      },
+
+      {
+        name: "year",
+        type: "input",
+        message: "Year: "
+      },
+
+      {
+        name: "paint",
+        type: "input",
+        message: "Paint: "
+      },
+
+      {
+        name: "transmission",
+        type: "input",
+        message: "Transmission: "
+      },
+
+      {
+        name: "mileage",
+        type: "input",
+        message: "Mileage: "
+      },
+      
+      {
+        name: "conditions",
+        type: "input",
+        message: "Condition: "
+      },      
+    ]).then(function(answer) {
+      //do some salary logic
+
       connection.query(
-        "INSERT INTO auctions SET ?",
+        "INSERT INTO car SET ?",
         {
-          item_name: answer.item,
-          category: answer.category,
-          starting_bid: answer.startingBid,
-          highest_bid: answer.startingBid
+          VIN: answer.VIN,
+          location: location,
+          maSSN: maSSN,
+          source: source,
+          purpose: purpose,
+          type: answer.type,
+          make: answer.make,
+          model: answer.model,
+          year: answer.year,
+          paint: answer.paint,
+          transmission: answer.transmission,
+          mileage: answer.mileage,
+          conditions: answer.conditions
+
         },
         function(err) {
           if (err) throw err;
-          console.log("Your auction was created successfully!");
+          
+          //if no err, will go back to login, now the employee should hit the returning employee. 
+          console.log("Your car was inserted correctly!");
           // re-prompt the user for if they want to bid or post
-          start();
+          CustomerMain();          
         }
-      );
-    });
 }
 
-function bidAuction() {
-  // query the database for all items being auctioned
-  connection.query("SELECT * FROM auctions", function(err, results) {
-    if (err) throw err;
-    // once you have the items, prompt the user for which they'd like to bid on
-    inquirer
-      .prompt([
-        {
-          name: "choice",
-          type: "rawlist",
-          choices: function() {
-            var choiceArray = [];
-            for (var i = 0; i < results.length; i++) {
-              choiceArray.push(results[i].item_name);
-            }
-            return choiceArray;
-          },
-          message: "What auction would you like to place a bid in?"
-        },
-        {
-          name: "bid",
-          type: "input",
-          message: "How much would you like to bid?"
-        }
-      ])
+function customerRent(){
+  inquirer
+      .prompt({
+        name: "rentMenu",
+        type: "rawlist",
+        message: "what would you like to do",
+        choices: ["List cars", "Filter", "Return"]
+      })
       .then(function(answer) {
-        // get the information of the chosen item
-        var chosenItem;
-        for (var i = 0; i < results.length; i++) {
-          if (results[i].item_name === answer.choice) {
-            chosenItem = results[i];
-          }
+        if (answer.rentMenu == "List cars") {
+         console.log("these are all of the cars!")   
+         //implemnt
+        } else if(answer.rentMenu == "Filter") {
+          console.log("Filter!!!!!!");
+          //Implement
+        } else if(answer.rentMenu == "Return") {
+          CustomerMain();
+        } else{
+          console.log("oh no, not good");
+        }
+      });  
+}
+
+function customerRentOut(){
+  var location = "bikinin bottom";
+  var maSSN = "012345678";
+  var source = 0;
+  var purpose = "rent"
+
+  inquirer
+    .prompt([
+      {
+        name: "VIN",
+        type: "input",
+        message: "VIN: "
+      },
+
+      {
+        name: "type",
+        type: "input",
+        message: "Type: "
+      },
+
+      {
+        name: "make",
+        type: "input",
+        message: "Make: "
+      },
+
+      {
+        name: "model",
+        type: "input",
+        message: "Model: "
+      },
+
+      {
+        name: "year",
+        type: "input",
+        message: "Year: "
+      },
+
+      {
+        name: "paint",
+        type: "input",
+        message: "Paint: "
+      },
+
+      {
+        name: "transmission",
+        type: "input",
+        message: "Transmission: "
+      },
+
+      {
+        name: "mileage",
+        type: "input",
+        message: "Mileage: "
+      },
+      
+      {
+        name: "conditions",
+        type: "input",
+        message: "Condition: "
+      },      
+    ]).then(function(answer) {
+      //do some salary logic
+
+      connection.query(
+        "INSERT INTO car SET ?",
+        {
+          VIN: answer.VIN,
+          location: location,
+          maSSN: maSSN,
+          source: source,
+          purpose: purpose,
+          type: answer.type,
+          make: answer.make,
+          model: answer.model,
+          year: answer.year,
+          paint: answer.paint,
+          transmission: answer.transmission,
+          mileage: answer.mileage,
+          conditions: answer.conditions
+
+        },
+        function(err) {
+          if (err) throw err;
+          
+          //if no err, will go back to login, now the employee should hit the returning employee. 
+          console.log("Your car was inserted correctly!");
+          // re-prompt the user for if they want to bid or post
+          CustomerMain();          
+        }
+}
+
+function customerMaintenance(){
+inquirer
+      .prompt({
+        name: "maintenanceMenu",
+        type: "rawlist",
+        message: "what would you like to do",
+        choices: ["Schedule", "Check Current"]
+      })
+      .then(function(answer) {
+        if (answer.maintenanceMenu == "Schedule") {
+         customerMaintenanceSchedule();
+        } else if(answer.maintenanceMenu == "Check Current") {
+          //sql for cars under the customer
+          console.log("show all of the cars for the scedule");
+          //Implement
+        } else if(answer.maintenanceMenu == "Return") {
+          CustomerMain();
+        } else{
+          console.log("oh no, not good");
+        }
+      });  
+}
+
+function customerMaintenanceSchedule(){
+  locations = ["springfield", "cuba", "san jose"]
+  inquirer
+      .prompt({
+        name: "maintenanceMenu",
+        type: "rawlist",
+        message: "What Service would you like",
+        choices: ["Oil Change","Tire Roatation", "Brake", "Return"]
+      },{
+        name: "location",
+        type: "rawlist",
+        message: "Choose Location",
+        choices: locations
+      },{
+        name: "VIN",
+        type: "input",
+        message: "VIN:"
+      }, {
+        name: "date",
+        type: "input",
+        message: "please enter date in format:MMDDYYYY 01012020"
+      })
+      .then(function(answer) {
+        if (answer.maintenanceMenu == "Schedule") {
+         console.log("oh goody! oil change");
+         //implemnt
+        } else if(answer.maintenanceMenu == "Tire Roatation") {
+          console.log("Tire rotation");
+          //Implement
+        } else if(answer.maintenanceMenu == "Brake") {
+          console.log("Brake");
+          //Implement
+        } else if(answer.maintenanceMenu == "Return") {
+          CustomerMain();
+        } else{
+          console.log("oh no, not good");
         }
 
-        // determine if bid was high enough
-        if (chosenItem.highest_bid < parseInt(answer.bid)) {
-          // bid was high enough, so update db, let the user know, and start over
-          connection.query(
-            "UPDATE auctions SET ? WHERE ?",
-            [
-              {
-                highest_bid: answer.bid
-              },
-              {
-                id: chosenItem.id
-              }
-            ],
-            function(error) {
-              if (error) throw err;
-              console.log("Bid placed successfully!");
-              start();
-            }
-          );
-        }
-        else {
-          // bid wasn't high enough, so apologize and start over
-          console.log("Your bid was too low. Try again...");
-          start();
+        console.log("put this in the service instance table");
+      });
+}
+
+function customerReview(){
+  locations = ["springfield", "cuba", "san jose"]
+  inquirer
+      .prompt({
+        name: "reviewMenu",
+        type: "rawlist",
+        message: "What Service would you like",
+        choices: ["Check Reveiws", "Write Reviews"]
+      }
+      .then(function(answer) {
+        if (answer.reviewMenu == "Check Reveiws") {
+         checkReview();
+         //implemnt
+        } else if(answer.reviewMenu == "Tire Roatation") {
+          writeReview();
+          //Implement
+        } else{
+          console.log("oh no, not good");
         }
       });
-  });
 }
+
+function writeReview(){
+  locations = ["springfield", "cuba", "san jose"]
+  inquirer
+      .prompt({
+        name: "location",
+        type: "rawlist",
+        message: "What location are you at?",
+        choices: locations
+      },{
+        name: "review",
+        type: "input",
+        message: "Please write your review",
+      }
+      .then(function(answer) {
+        console.log("you review has been entered");
+        CustomerMain();
+      });
+}
+
+
+function checkReview(){
+  locations = ["springfield", "cuba", "san jose"]
+  inquirer
+      .prompt({
+        name: "location",
+        type: "rawlist",
+        message: "What location are you at?",
+        choices: locations
+      }
+      .then(function(answer) {
+        console("here are the reviews for " + answer.location);
+        CustomerMain();
+      });
+}
+
+function customerLogout(){
+  start();  
+}
+
+
+
+
+
+
+
+
+
+

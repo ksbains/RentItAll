@@ -20,12 +20,36 @@ CREATE TABLE cutomer_type(
     on delete cascade on update cascade
 );
 
+CREATE TABLE company_locations(
+  address VARCHAR(100) NOT NULL,
+  lot_size INT NOT NULL,
+  P_number INT NOT NULL,
+  PRIMARY KEY (address)
+);
+
+CREATE TABLE employee(
+  SSN char(9) NOT NULL,
+  name VARCHAR(100) NOT NULL,
+  loc_address VARCHAR(100) NOT NULL,
+  salary INT NOT NULL,
+  PRIMARY KEY (SSN),
+  FOREIGN KEY (loc_address) REFERENCES company_locations(address)
+    on update cascade
+);
+
+CREATE TABLE manager(
+  mgr_ssn char(9) NOT NULL,
+  PRIMARY KEY (mgr_ssn),
+  FOREIGN KEY (mgr_ssn) REFERENCES employee(SSN)
+    on delete cascade on update cascade
+);
+
 CREATE TABLE car(
   VIN VARCHAR(100) NOT NULL,
   loc_address VARCHAR(100) NOT NULL,
   ma_ssn char(9),
-  source boolean not null, -- TRUE-From Company FALSE-From customer
-  purpose varchar(10) not null, --sell, rent, bought, rent_out, service
+  source boolean not null,
+  purpose varchar(10) not null,
   type VARCHAR(45) NOT NULL,
   make VARCHAR(45) NOT NULL,
   model VARCHAR(45) NOT NULL,
@@ -39,13 +63,6 @@ CREATE TABLE car(
     on update cascade,
   FOREIGN KEY (ma_ssn) REFERENCES manager(mgr_ssn)
     on delete set null on update cascade
-);
-
-CREATE TABLE company_locations(
-  address VARCHAR(100) NOT NULL,
-  lot_size INT NOT NULL,
-  P_number INT NOT NULL,
-  PRIMARY KEY (address)
 );
 
 CREATE TABLE rent_out(
@@ -92,24 +109,6 @@ CREATE TABLE sell(
     on delete cascade on update cascade
 );
 
--- need to add FK for loc_address
-CREATE TABLE employee(
-  SSN char(9) NOT NULL,
-  name VARCHAR(100) NOT NULL,
-  loc_address VARCHAR(100) NOT NULL,
-  salary INT NOT NULL,
-  PRIMARY KEY (SSN),
-  FOREIGN KEY (loc_address) REFERENCES company_locations(address)
-    on update cascade
-);
-
-CREATE TABLE manager(
-  mgr_ssn char(9) NOT NULL,
-  PRIMARY KEY (mgr_ssn),
-  FOREIGN KEY (mgr_ssn) REFERENCES employee(SSN)
-    on delete cascade on update cascade
-);
-
 CREATE TABLE mechanic(
   m_ssn char(9) NOT NULL,
   ma_ssn char(9),
@@ -142,8 +141,6 @@ CREATE TABLE review(
   FOREIGN KEY (loc_address) REFERENCES company_locations(address)
     on update cascade
 );
-
-
 
 CREATE TABLE maintenance_service(
   name VARCHAR(100) NOT NULL,

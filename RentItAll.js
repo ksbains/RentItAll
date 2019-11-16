@@ -1,19 +1,15 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
-
 // create the connection information for the sql database
 var connection = mysql.createConnection({
   host: "localhost",
   port: 3306,
-
   // Your username
   user: "root",
-
   // Your password
   password: "",
   database: "RentItAll_DB"
 });
-
 // connect to the mysql server and sql database
 connection.connect(function(err) {
   if (err) throw err;
@@ -21,7 +17,7 @@ connection.connect(function(err) {
   start();
 });
 
-// function which prompts the user for what action they should take
+// function which prompts the user to see what type they are
 function start() {
   inquirer
     .prompt({
@@ -31,20 +27,120 @@ function start() {
       choices: ["Employee", "Customer"]
     })
     .then(function(answer) {
-      // based on their answer, either call the bid or the post functions
-      if (answer.postOrBid.toUpperCase() === "EMPLOYEE") {
+      // based on their answer, either call the Employee or Customer functions
+      if (answer.userType.toUpperCase() === "EMPLOYEE") {
         //This method will handle the employee flow
-        postAuction();
         Employee();
       }
       else {
-        //This method will handle the employee flow
-        bidAuction();
+        //This method will handle the customer flow
+        Customer();
       }
     });
 }
+//ALL OF EMPLOYEE
+function Employee(){
+  inquirer
+      .prompt({
+        name: "userType",
+        type: "rawlist",
+        message: "",
+        choices: ["New Employee", "Returning Employee"]
+      })
+      .then(function(answer) {
+        // based on their answer, either call the createEmployee or the signInEmployee  functions
+        if (answer.postOrBid.toUpperCase() === "NEW EMPLOYEE") {
+          createEmployee();
+        }
+        else {
+          //This method will handle the employee flow
+          Employeelogin();
+        }
+      });
+ }
+
+function createEmployee(){
+  
+  var locations;
+  
+  // connection.query("SELECT address FROM company_locations", 
+  //   function (err, result, fields) {
+  //     if (err) throw err;
+
+  //     for (var i = 0; i < result.length; i++) {
+  //       location.push(result[i].address);
+  //     }
+  //   };
+
+    locations = ["springfield", "cuba", "san jose"]
+    managers = ["123456789", "012345678"]
+
+  inquirer
+    .prompt([
+      {
+        name: "SSN",
+        type: "input",
+        message: "SSN"
+      },
+      {
+        name: "name",
+        type: "input",
+        message: "name"
+      },{
+        name: "position",
+        type: "rawlist",
+        message: "What position are you?",
+        choices: ["Mechanic", "Manager", "Receptionist"]
+      },{
+        name: "location",
+        type: "rawlist",
+        message: "What location are you at?",
+        choices: locations
+      },
+      {
+        name: "manager",
+        type: "rawlist",
+        message: "Whis your manager?",
+        choices: managers
+      }
+    ])
+    .then(function(answer) {
+      //do some salary logic
+      var salary = 0;
+      if(answer.position == "Mechanic"){
+        salary = 65000;
+      } else if(answer.position == "Receptionist"){
+        salary = 45000;
+      } else if(answer.position == "Manager"){
+        salary = 95000;
+      }else{
+        salary = -1;
+      }
+
+      connection.query(
+        "INSERT INTO employees SET ?",
+        {
+          SSN: answer.SSN,
+          name: answer.name,
+          address: answer.address,
+          salary: salary,
+          manager: manager,
+          position: answer.position
+        },
+        function(err) {
+          if (err) throw err;
+          
+          //if no err, will go back to login, now the employee should hit the returning employee. 
+          console.log("Your employee was created successfully!");
+          // re-prompt the user for if they want to bid or post
+          start();
+        }
+      );
+    });
+
+}
 // function to handle posting new items up for auction
-function Employee() {
+function EmployeeLogin() {
   // prompt for info about the item being put up for auction
   inquirer
     .prompt([
@@ -54,17 +150,13 @@ function Employee() {
         message: "username"
       },
       {
-        name: "password",
+        name: "SSN",
         type: "input",
-        message: "password"
+        message: "SSN"
       }
     ])
     .then(function(answer) {
-      // when finished prompting, insert a new item into the db with that info\
-      on.query("SELECT username FROM employee", function (err, result, fields) {
-          if (err) throw err;
-          console.log("the employee is: " + result);
-        }
+      // when finished prompting, insert a new item into the db with that info
       connection.query(
         "INSERT INTO employees SET ?",
         {
@@ -81,51 +173,119 @@ function Employee() {
     });
 }
 
+//ALL OF CUSTOMER
+
 function Customer() {
+  inquirer
+      .prompt({
+        name: "customerType",
+        type: "rawlist",
+        message: "Are you a new or returning customer",
+        choices: ["New Customer", "Returning Customer"]
+      })
+      .then(function(answer) {
+        // based on their answer, either call the createEmployee or the signInEmployee  functions
+        if (answer.customerType.toUpperCase() === "NEW CUSTOMER") {
+          createCustomer();
+        }
+        else {
+          //This method will handle the employee flow
+          CustomerLogin();
+        }
+      });
+}
+
+function createCustomer(){
+  inquirer
+    .prompt([
+      {
+        name: "username",
+        type: "input",
+        message: "What is your username"
+      },
+      {
+        name: "password",
+        type: "input",
+        message: "What is your password",
+        
+      },
+      {
+        name: "name",
+        type: "input",
+        message: "What is your name"
+      },
+      {
+        name: "address",
+        type: "input",
+        message: "What is your address"
+      },
+      {
+        name: "phone_number",
+        type: "input",
+        message: "What is your phone_number"
+      }
+    ])
+    .then(function(answer) {
+      //do some salary logic
+
+      connection.query(
+        "INSERT INTO employees SET ?",
+        {
+          username: answer.username,
+          password: answer.password,
+          name: answer.name,
+          address: answer.address,
+          phone_number: answer.phone_number
+        },
+        function(err) {
+          if (err) throw err;
+          
+          //if no err, will go back to login, now the employee should hit the returning employee. 
+          console.log("Your employee was created successfully!");
+          // re-prompt the user for if they want to bid or post
+          start();
+        }
+      );
+    });
+
+}
+function CustomerLogin() {
   // prompt for info about the item being put up for auction
   inquirer
     .prompt([
       {
-        name: "item",
+        name: "username",
         type: "input",
-        message: "What is the item you would like to submit?"
+        message: "username"
       },
       {
-        name: "category",
+        name: "SSN",
         type: "input",
-        message: "What category would you like to place your auction in?"
-      },
-      {
-        name: "startingBid",
-        type: "input",
-        message: "What would you like your starting bid to be?",
-        validate: function(value) {
-          if (isNaN(value) === false) {
-            return true;
-          }
-          return false;
-        }
+        message: "SSN"
       }
     ])
     .then(function(answer) {
-      // when finished prompting, insert a new item into the db with that info
+      // when finished prompting, insert a new item into the db with that info\
       connection.query(
         "INSERT INTO employees SET ?",
         {
-          item_name: answer.item,
-          category: answer.category,
-          starting_bid: answer.startingBid,
-          highest_bid: answer.startingBid
+          username: answer.username,
+          password: answer.password
         },
         function(err) {
           if (err) throw err;
-          console.log("Your auction was created successfully!");
+          console.log("Your employee was created successfully!");
           // re-prompt the user for if they want to bid or post
           start();
         }
       );
     });
 }
+
+
+
+
+
 
 
 

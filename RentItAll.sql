@@ -9,6 +9,7 @@ CREATE TABLE customer(
   name VARCHAR(100) NOT NULL,
   P_number integer NOT NULL,
   address VARCHAR(100) NOT NULL,
+  phone_number VARCHAR(100) NOT NULL,
   PRIMARY KEY (username)
 );
 

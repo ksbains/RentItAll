@@ -1,8 +1,3 @@
-DROP DATABASE IF EXISTS RentItAll_DB;
-CREATE DATABASE RentItAll_DB;
-
-USE RentItAll_DB;
-
 CREATE TABLE customer(
   username VARCHAR(100) NOT NULL,
   password VARCHAR(45) NOT NULL,
@@ -48,16 +43,16 @@ CREATE TABLE car(
   VIN VARCHAR(100) NOT NULL,
   loc_address VARCHAR(100) NOT NULL,
   ma_ssn char(9),
-  source boolean not null,
-  purpose varchar(10) not null,
+  source bit not null,
+  purpose varchar(10) not null, 
   type VARCHAR(45) NOT NULL,
   make VARCHAR(45) NOT NULL,
   model VARCHAR(45) NOT NULL,
   paint VARCHAR(45) NOT NULL,
   transmission VARCHAR(45) NOT NULL,
   mileage integer NOT NULL,
-  condition VARCHAR(45) NOT NULL,
-  year INT(4) NOT NULL,
+  conditions VARCHAR(45) NOT NULL,
+  year integer NOT NULL,
   PRIMARY KEY (VIN),
   FOREIGN KEY (loc_address) REFERENCES company_locations(address)
     on update cascade,
@@ -166,15 +161,12 @@ CREATE TABLE service_instance(
   FOREIGN KEY (car_VIN) REFERENCES car(VIN)
     on delete set null on update cascade
 );
-
 CREATE TABLE instance_of(
   cu_username varchar(100) NOT NULL,
   b_id integer NOT NULL,
   srv_name varchar(100) NOT NULL,
   PRIMARY KEY(cu_username, b_id, srv_name),
-  FOREIGN KEY (cu_username) REFERENCES customer(username)
-    on delete cascade on update cascade,
-  FOREIGN KEY (b_id) REFERENCES service_instance(b_id)
+  FOREIGN KEY (cu_username, b_id) REFERENCES service_instance(cu_username, b_id)
     on delete cascade on update cascade,
   FOREIGN KEY (srv_name) REFERENCES maintenance_service(name)
     on delete cascade on update cascade
@@ -199,3 +191,4 @@ CREATE TABLE assist(
   FOREIGN KEY (re_ssn) REFERENCES receptionist(r_ssn)
     on delete cascade on update cascade
 );
+

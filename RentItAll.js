@@ -22,7 +22,7 @@ function start() {
   inquirer
     .prompt({
       name: "userType",
-      type: "rawlist",
+      type: "list",
       message: "Are you an employee or customer?",
       choices: ["Employee", "Customer"]
     })
@@ -43,7 +43,7 @@ function Employee(){
   inquirer
       .prompt({
         name: "userType",
-        type: "rawlist",
+        type: "list",
         message: "",
         choices: ["New Employee", "Returning Employee"]
       })
@@ -62,15 +62,6 @@ function Employee(){
 function createEmployee(){
   
   var locations;
-  
-  // connection.query("SELECT address FROM company_locations", 
-  //   function (err, result, fields) {
-  //     if (err) throw err;
-
-  //     for (var i = 0; i < result.length; i++) {
-  //       location.push(result[i].address);
-  //     }
-  //   };
 
     locations = ["springfield", "cuba", "san jose"]
     managers = ["123456789", "012345678"]
@@ -88,98 +79,152 @@ function createEmployee(){
         message: "name"
       },{
         name: "position",
-        type: "rawlist",
+        type: "list",
         message: "What position are you?",
         choices: ["Mechanic", "Manager", "Receptionist"]
       },{
         name: "location",
-        type: "rawlist",
+        type: "list",
         message: "What location are you at?",
         choices: locations
       },
       {
         name: "manager",
-        type: "rawlist",
-        message: "Whis your manager?",
+        type: "list",
+        message: "Who is your manager?",
         choices: managers
       }
     ])
     .then(function(answer) {
-      //do some salary logic
+//do some salary logic
       var salary = 0;
       if(answer.position == "Mechanic"){
         salary = 65000;
+          connection.query(
+          "INSERT INTO mechanic SET ?",
+          {
+            //this is the meachinc's ssn
+            m_ssn: answer.SSN,
+            //ma_ssn is the manager ssn
+            ma_ssn: answer.manager,
+          },
+          function(err) {
+            if (err) throw err;
+            
+            //if no err, will go back to login, now the employee should hit the returning employee. 
+            console.log("Your mechanic was created successfully!");
+            // re-prompt the user for if they want to bid or post
+          }
+        );
       } else if(answer.position == "Receptionist"){
         salary = 45000;
+        connection.query(
+          "INSERT INTO receptionist SET ?",
+          {
+            //this is the meachinc's ssn
+            r_ssn: answer.SSN,
+            //ma_ssn is the manager ssn
+            ma_ssn: answer.manager,
+          },
+          function(err) {
+            if (err) throw err;
+            
+            //if no err, will go back to login, now the employee should hit the returning employee. 
+            console.log("Your receptionist was created successfully!");
+            // re-prompt the user for if they want to bid or post
+          }
+        );
       } else if(answer.position == "Manager"){
         salary = 95000;
+        connection.query(
+          "INSERT INTO manager SET ?",
+          {
+            //this is the meachinc's ssn
+            mgr_ssn: answer.SSN,
+          },
+          function(err) {
+            if (err) throw err;
+            //if no err, will go back to login, now the employee should hit the returning employee. 
+            console.log("Your manager was created successfully!");
+            // re-prompt the user for if they want to bid or post
+          }
+        );
       }else{
         salary = -1;
       }
-
       connection.query(
         "INSERT INTO employees SET ?",
         {
           SSN: answer.SSN,
           name: answer.name,
-          address: answer.address,
+          loc_address: answer.location,
           salary: salary,
-          manager: manager,
-          position: answer.position
         },
         function(err) {
           if (err) throw err;
-          
           //if no err, will go back to login, now the employee should hit the returning employee. 
           console.log("Your employee was created successfully!");
           // re-prompt the user for if they want to bid or post
-          start();
         }
       );
     });
 
+    start();
 }
-// function to handle posting new items up for auction
-function EmployeeLogin() {
+
+function Employeelogin() {
   // prompt for info about the item being put up for auction
-  inquirer
-    .prompt([
+  var username = "kb";
+  var password = "";
+
+  inquirer.prompt([
       {
         name: "username",
         type: "input",
         message: "username"
       },
       {
-        name: "SSN",
-        type: "input",
-        message: "SSN"
+        name: "password",
+        type: "password",
+        message: "password"
       }
-    ])
-    .then(function(answer) {
-      // when finished prompting, insert a new item into the db with that info
-      connection.query(
-        "INSERT INTO employees SET ?",
-        {
-          username: answer.username,
-          password: answer.password
-        },
-        function(err) {
-          if (err) throw err;
-          console.log("Your employee was created successfully!");
-          // re-prompt the user for if they want to bid or post
-          start();
-        }
-      );
-    });
-}
+    ]).then(function(answer) {
+      // when finished prompting, insert a new item into the db with that info\
+     // if(answer.username == username && answer.password == password){
+     //   EmployeeMain();
+     // }
+     connection.query("SELECT username,password FROM employee", function(err, results) {
+       if (err){
+         throw err;
+       } 
+         var usernameArray = [];
+         var passwordArray = [];
+            for (var i = 0; i < results.length; i++) {
+              usrenameArray.push(results[i].username);
+              passwordArray.push(results[i].password);
+            }
+            for (var i = 0; i < usernameArray.length; i++){
+              if(answer.username == username[i] && answer.password == username[i]){
+                EmployeeMain();
+              }else {
+                console.log("your usrname and/or password is incorrect, please try again");
+                Employeelogin();
+              }
+            }
+        });
+    }
+}  
 
+function EmployeeMain(){
+  
+}
 //ALL OF CUSTOMER
 
 function Customer() {
   inquirer
       .prompt({
         name: "customerType",
-        type: "rawlist",
+        type: "list",
         message: "Are you a new or returning customer",
         choices: ["New Customer", "Returning Customer"]
       })
@@ -252,7 +297,7 @@ function createCustomer(){
 function CustomerLogin() {
   // prompt for info about the item being put up for auction
   var username = "kb";
-  var password = "password";
+  var password = "";
 
   inquirer
     .prompt([
@@ -280,7 +325,7 @@ function CustomerMain() {
   inquirer
       .prompt({
         name: "menu",
-        type: "rawlist",
+        type: "list",
         message: "What would you like to do?",
         choices: ["buy" , "sell", "rent" ,"rentout", "maintenance" , "review", "logout"]
       })
@@ -302,11 +347,12 @@ function CustomerMain() {
         }
       });  
 }
+
 function customerBuy(){
   inquirer
       .prompt({
         name: "buyMenu",
-        type: "rawlist",
+        type: "list",
         message: "what would you like to do",
         choices: ["List cars", "Filter", "Return"]
       })
@@ -325,12 +371,8 @@ function customerBuy(){
       });  
 }
 
-function customerSell(){
-  var location = "bikinin bottom";
-  var maSSN = "012345678";
-  var source = 0;
-  var purpose = "sell"
-
+function customerSell() {
+  locations = ["springfield", "cuba", "san jose"] 
   inquirer
     .prompt([
       {
@@ -338,37 +380,31 @@ function customerSell(){
         type: "input",
         message: "VIN: "
       },
-
       {
         name: "type",
         type: "input",
         message: "Type: "
       },
-
       {
         name: "make",
         type: "input",
         message: "Make: "
       },
-
       {
         name: "model",
         type: "input",
         message: "Model: "
       },
-
       {
         name: "year",
         type: "input",
         message: "Year: "
       },
-
       {
         name: "paint",
         type: "input",
         message: "Paint: "
       },
-
       {
         name: "transmission",
         type: "input",
@@ -380,21 +416,29 @@ function customerSell(){
         type: "input",
         message: "Mileage: "
       },
-      
       {
         name: "conditions",
         type: "input",
         message: "Condition: "
-      },      
+      },{
+        name: "location",
+        type: "list",
+        message: "Choose Location",
+        choices: locations
+      }      
     ]).then(function(answer) {
       //do some salary logic
+      var maSSN = "012345678";
+      var source = 0;
+      var purpose = "sell";
+
 
       connection.query(
         "INSERT INTO car SET ?",
         {
           VIN: answer.VIN,
-          location: location,
-          maSSN: maSSN,
+          loc_address: location,
+          ma_ssn: maSSN,
           source: source,
           purpose: purpose,
           type: answer.type,
@@ -414,14 +458,15 @@ function customerSell(){
           console.log("Your car was inserted correctly!");
           // re-prompt the user for if they want to bid or post
           CustomerMain();          
-        }
+        })
+    });
 }
 
 function customerRent(){
   inquirer
       .prompt({
         name: "rentMenu",
-        type: "rawlist",
+        type: "list",
         message: "what would you like to do",
         choices: ["List cars", "Filter", "Return"]
       })
@@ -441,7 +486,7 @@ function customerRent(){
 }
 
 function customerRentOut(){
-  var location = "bikinin bottom";
+  locations = ["springfield", "cuba", "san jose"]
   var maSSN = "012345678";
   var source = 0;
   var purpose = "rent"
@@ -529,14 +574,15 @@ function customerRentOut(){
           console.log("Your car was inserted correctly!");
           // re-prompt the user for if they want to bid or post
           CustomerMain();          
-        }
-}
+        })
+      })
+  }
 
 function customerMaintenance(){
 inquirer
       .prompt({
         name: "maintenanceMenu",
-        type: "rawlist",
+        type: "list",
         message: "what would you like to do",
         choices: ["Schedule", "Check Current"]
       })
@@ -560,12 +606,12 @@ function customerMaintenanceSchedule(){
   inquirer
       .prompt({
         name: "maintenanceMenu",
-        type: "rawlist",
+        type: "list",
         message: "What Service would you like",
         choices: ["Oil Change","Tire Roatation", "Brake", "Return"]
       },{
         name: "location",
-        type: "rawlist",
+        type: "list",
         message: "Choose Location",
         choices: locations
       },{
@@ -602,15 +648,15 @@ function customerReview(){
   inquirer
       .prompt({
         name: "reviewMenu",
-        type: "rawlist",
+        type: "list",
         message: "What Service would you like",
-        choices: ["Check Reveiws", "Write Reviews"]
-      }
+        choices: ["Check Reviews", "Write Reviews"]
+      })
       .then(function(answer) {
-        if (answer.reviewMenu == "Check Reveiws") {
+        if (answer.reviewMenu == "Check Reviews") {
          checkReview();
          //implemnt
-        } else if(answer.reviewMenu == "Tire Roatation") {
+        } else if(answer.reviewMenu == "Write Reviews") {
           writeReview();
           //Implement
         } else{
@@ -622,34 +668,34 @@ function customerReview(){
 function writeReview(){
   locations = ["springfield", "cuba", "san jose"]
   inquirer
-      .prompt({
-        name: "location",
-        type: "rawlist",
-        message: "What location are you at?",
-        choices: locations
-      },{
+      .prompt([{
         name: "review",
         type: "input",
-        message: "Please write your review",
-      }
-      .then(function(answer) {
+        message: "Please write your review"
+      },
+      {
+        name: "location",
+        type: "list",
+        message: "What location are you at?",
+        choices: locations
+      }]).then(function(answer) {
+        console.log("here is your review: " + answer.review);
         console.log("you review has been entered");
         CustomerMain();
       });
 }
-
 
 function checkReview(){
   locations = ["springfield", "cuba", "san jose"]
   inquirer
       .prompt({
         name: "location",
-        type: "rawlist",
+        type: "list",
         message: "What location are you at?",
         choices: locations
-      }
+      })
       .then(function(answer) {
-        console("here are the reviews for " + answer.location);
+        console.log("here are the reviews for " + answer.location);
         CustomerMain();
       });
 }

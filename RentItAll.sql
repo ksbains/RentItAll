@@ -1,8 +1,3 @@
-DROP DATABASE IF EXISTS RentItAll_DB;
-CREATE DATABASE RentItAll_DB;
-
-USE RentItAll_DB;
-
 CREATE TABLE customer(
   username VARCHAR(100) NOT NULL,
   password VARCHAR(45) NOT NULL,
@@ -168,7 +163,6 @@ CREATE TABLE service_instance(
   FOREIGN KEY (car_VIN) REFERENCES car(VIN)
     on delete set null on update cascade
 );
-
 CREATE TABLE instance_of(
   cu_username varchar(100) NOT NULL,
   b_id integer NOT NULL,
@@ -201,3 +195,4 @@ CREATE TABLE assist(
   FOREIGN KEY (re_ssn) REFERENCES receptionist(r_ssn)
     on delete cascade on update cascade
 );
+

@@ -2,8 +2,8 @@ CREATE TABLE customer(
   username VARCHAR(100) NOT NULL,
   password VARCHAR(45) NOT NULL,
   name VARCHAR(100) NOT NULL,
+  P_number integer NOT NULL,
   address VARCHAR(100) NOT NULL,
-  phone_number VARCHAR(100) NOT NULL,
   PRIMARY KEY (username)
 );
 
@@ -59,8 +59,6 @@ CREATE TABLE car(
   FOREIGN KEY (ma_ssn) REFERENCES manager(mgr_ssn)
     on delete set null on update cascade
 );
-
-
 
 CREATE TABLE rent_out(
   cu_username VARCHAR(100) NOT NULL,
@@ -167,14 +165,13 @@ CREATE TABLE instance_of(
   cu_username varchar(100) NOT NULL,
   b_id integer NOT NULL,
   srv_name varchar(100) NOT NULL,
-  PRIMARY KEY(cu_username, b_id),
-  FOREIGN KEY (cu_username) REFERENCES customer(username)
-    on delete cascade on update cascade,
-  FOREIGN KEY (b_id) REFERENCES service_instance(b_id)
+  PRIMARY KEY(cu_username, b_id, srv_name),
+  FOREIGN KEY (cu_username, b_id) REFERENCES service_instance(cu_username, b_id)
     on delete cascade on update cascade,
   FOREIGN KEY (srv_name) REFERENCES maintenance_service(name)
     on delete cascade on update cascade
 );
+
 
 CREATE TABLE service_offer(
   loc_address VARCHAR(100) NOT NULL,
@@ -196,3 +193,33 @@ CREATE TABLE assist(
     on delete cascade on update cascade
 );
 
+INSERT INTO customer
+VALUES  ('testuser1', '123', 'tester1', '012013012', '123 Virginia St'),
+        ('testuser2', '345', 'tester2', '012013123', '124 Virginia St'),
+        ('testuser3', '678', 'tester3', '012013345', '125 Virginia St'),
+        ('testuser4', '912', 'tester4', '012013234', '126 Virginia St');
+
+INSERT INTO customer_type
+VALUES  ('testuser1', 'buyer'),
+        ('testuser1', 'renter'),
+        ('testuser2', 'seller'),
+        ('testuser3', 'host'),
+        ('testuser4', 'renter');
+
+INSERT INTO company_locations
+VALUES  ('123 Washington Sq', '100', '1234567894'),
+        ('123 Irvington St', '50', '1234567498');
+
+INSERT INTO employee
+VALUES  ('123456789', 'mgr1', '123 Washington Sq', '200000'),
+        ('123456788', 'mch1', '123 Washington Sq', '100000'),
+        ('123456787', 'rep1', '123 Washington Sq', '100000'),
+        ('123456786', 'mgr2', '123 Irvington St', '200000');
+
+INSERT INTO manager
+VALUES  ('123456789'),
+        ('123456786');
+
+INSERT INTO car
+VALUES  ('DHB100ZASFG','123 Washington Sq', NULL, 0, 'RENT', 'GAS',
+          'HONDA', 'ACCORD', 'GREEN','CVT-10','10000','USED','2019');

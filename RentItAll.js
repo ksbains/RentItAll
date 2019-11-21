@@ -61,8 +61,16 @@ function Employee(){
 
 function createEmployee(){
   console.log("welcome new Employee!");
-  var locations;
-  locations = ["123 Irvington St", "123 Washington St"];
+  var locations = [];
+  connection.query("SELECT address FROM company_locations", function(err, results) {
+   if (err){
+     throw err;
+   }
+    for (var i = 0; i < results.length; i++) {      
+      locations.push(results[i].address);
+    }     
+   }); 
+  //locations = ["123 Irvington St", "123 Washington St"];
   managers = ["123456789", "123456786"];
   inquirer
     .prompt([
@@ -428,7 +436,15 @@ function customerBuy(){
 }
 
 function customerSell() {
-locations = ["123 Irvington St", "123 Washington St"];
+var locations = [];
+  connection.query("SELECT address FROM company_locations", function(err, results) {
+   if (err){
+     throw err;
+   }
+    for (var i = 0; i < results.length; i++) {      
+      locations.push(results[i].address);
+    }     
+   });
   inquirer
     .prompt([
       {
@@ -542,7 +558,15 @@ function customerRent(){
 }
 
 function customerRentOut(){
-  locations = ["123 Irvington St", "123 Washington St"];
+  var locations = [];
+  connection.query("SELECT address FROM company_locations", function(err, results) {
+   if (err){
+     throw err;
+   }
+    for (var i = 0; i < results.length; i++) {      
+      locations.push(results[i].address);
+    }     
+   });
   var maSSN = "123456789";
   var source = 0;
   var purpose = "rent"
@@ -658,7 +682,15 @@ inquirer
 }
 
 function customerMaintenanceSchedule(){
-  locations = ["123 Irvington St", "123 Washington St"];
+  var locations = [];
+  connection.query("SELECT address FROM company_locations", function(err, results) {
+   if (err){
+     throw err;
+   }
+    for (var i = 0; i < results.length; i++) {      
+      locations.push(results[i].address);
+    }     
+   });
   inquirer
       .prompt({
         name: "maintenanceMenu",
@@ -700,7 +732,15 @@ function customerMaintenanceSchedule(){
 }
 
 function customerReview(){
-  locations = ["springfield", "cuba", "san jose"]
+  var locations = [];
+  connection.query("SELECT address FROM company_locations", function(err, results) {
+   if (err){
+     throw err;
+   }
+    for (var i = 0; i < results.length; i++) {      
+      locations.push(results[i].address);
+    }     
+   });
   inquirer
       .prompt({
         name: "reviewMenu",
@@ -722,7 +762,15 @@ function customerReview(){
 }
 
 function writeReview(){
-  locations = ["springfield", "cuba", "san jose"]
+  var locations = [];
+  connection.query("SELECT address FROM company_locations", function(err, results) {
+   if (err){
+     throw err;
+   }
+    for (var i = 0; i < results.length; i++) {      
+      locations.push(results[i].address);
+    }     
+   });
   inquirer
       .prompt([{
         name: "review",
@@ -742,7 +790,15 @@ function writeReview(){
 }
 
 function checkReview(){
-  locations = ["springfield", "cuba", "san jose"]
+  var locations = [];
+  connection.query("SELECT address FROM company_locations", function(err, results) {
+   if (err){
+     throw err;
+   }
+    for (var i = 0; i < results.length; i++) {      
+      locations.push(results[i].address);
+    }     
+   });
   inquirer
       .prompt({
         name: "location",

@@ -71,6 +71,18 @@ function createEmployee(){
     }     
    }); 
   //locations = ["123 Irvington St", "123 Washington St"];
+  var managers = [];
+  var managersID = [];
+  connection.query("SELECT name, mgr_ssn FROM employee INNER JOIN manager ON employee.SSN = manager.mgr_ssn", function(err, results) {
+   if (err){
+     throw err;
+   }
+    for (var i = 0; i < results.length; i++) {      
+      managers.push(results[i].name);
+      managersID.push(results[i].mgr_ssn);
+    }     
+   }); 
+  
   managers = ["123456789", "123456786"];
   inquirer
     .prompt([
@@ -99,8 +111,8 @@ function createEmployee(){
       {
         name: "manager",
         type: "list",
-        message: "Who is your manager?",
-        choices: managers
+        message: "Who is your manager, please select Manager ID?",
+        choices: managersID
       }]).then(function(answer) {
       var salary = 0;
       if(answer.position == "Mechanic"){
@@ -201,6 +213,7 @@ function Employeelogin() {
        if (err){
          throw err;
        } 
+
          var nameArray = [];
          var ssnArray = [];
          var salaryArray = [];
@@ -213,16 +226,16 @@ function Employeelogin() {
             if(answer.name == nameArray[i] && answer.SSN == ssnArray[i]){
               if(salaryArray[i] == 45000){
                 // this is for the receptionist
-                receptionistMain();
+                receptionistMain(answer.SSN);
                 i = nameArray.length++;
               } else if(salaryArray[i] == 65000){
                 // this is for the mechanic
-                mechanicMain();
+                mechanicMain(answer.SSN);
                 i = nameArray.length++;
               } else if(salaryArray[i] == 95000){
                 // this is for the manager
                 // might have to pass the ssn like this: managerMain(answer.SSN)
-                managerMain();
+                managerMain(answer.SSN);
                 i = nameArray.length++;
               } 
             } else{
@@ -236,7 +249,7 @@ function Employeelogin() {
     });
 }  
 
-function receptionistMain(){
+function receptionistMain(ssn){
   console.log("welcome to receptionist Main");
   inquirer.prompt({
         name: "receptionistMenu",
@@ -246,16 +259,36 @@ function receptionistMain(){
       })
       .then(function(answer) {
         if(answer.receptionistMenu == "View Customer"){
-          //show all customers? or maybe just one's based on teh re_ssn?
+          // maybe just one's based on the re_ssn in the assits table?
+            connection.query("SELECT * FROM assist", function(err, results) {
+             if (err){throw err;}
+             var cusotomerArray = [];
+             var recepArray = [];
+
+             for(var i = 0; i< results.length; i++){
+              customerArray.push(results[i].cu_username);
+              recepArray.push(results[i].re_ssn);
+             }
+
+             var toDisplay = [];
+
+             for (var i = 0; i < recepArray.length; i++) {
+               if(recepArray[i] == ssn){
+                 toDisplay.push(customerArray[i]);
+               }
+             }
+             console.log(toDisplay);
+           });
+          
         } else if(answer.receptionistMenu == "Add Customer"){
-          //should be same logic as create customer
+          //should be same logic as create customer and then add to the assits table
         } else{
           console.log("ooPS Should not be here at all!")
         }
       });
 }
 
-function managerMain(){
+function managerMain(ssn){
   console.log("welcome to manager Main");
   inquirer.prompt({
         name: "ManagerMenu",
@@ -266,21 +299,180 @@ function managerMain(){
       .then(function(answer) {
         if(answer.ManagerMenu == "View Car"){
            // list the car table using connectino
+           connection.query("SELECT * FROM car", function(err, results) {
+             if (err){throw err;}
+             
+
+             var toDisplay = [];
+             var header = "Make Model Year VIN address" + '\n' + "";
+
+              for (var i = 0; i < results.length; i++) {
+               
+                 var toReturn = "";
+               
+                 toReturn = toReturn + results[i].make + " ";
+                 toReturn = toReturn + results[i].model + " ";
+                 toReturn = toReturn + results[i].year + " ";
+                 toReturn = toReturn + results[i].VIN + " ";
+                 toReturn = toReturn + results[i].loc_address + '\n';
+
+                 toDisplay.push(toReturn);
+             }
+             toDisplay.unshift(header);
+
+             for(var i = 0; i<toDisplay.length; i++){
+
+               console.log(toDisplay[i]);
+               console.log("---------------------------------------------------");
+             }
+           });
         } else if(answer.ManagerMenu == "Add Car"){
           //same logic as cusotmer adding car, except now fill in this ms_ssn
+          var locations = [];
+          connection.query("SELECT address FROM company_locations", function(err, results) {
+           if (err){
+             throw err;
+           }
+            for (var i = 0; i < results.length; i++) {      
+              locations.push(results[i].address);
+            }     
+           });
+          inquirer
+            .prompt([
+              {
+                name: "VIN",
+                type: "input",
+                message: "VIN: "
+              },
+              {
+                name: "type",
+                type: "input",
+                message: "Type: "
+              },
+              {
+                name: "make",
+                type: "input",
+                message: "Make: "
+              },
+              {
+                name: "model",
+                type: "input",
+                message: "Model: "
+              },
+              {
+                name: "year",
+                type: "input",
+                message: "Year: "
+              },
+              {
+                name: "paint",
+                type: "input",
+                message: "Paint: "
+              },
+              {
+                name: "transmission",
+                type: "input",
+                message: "Transmission: "
+              },
+
+              {
+                name: "mileage",
+                type: "input",
+                message: "Mileage: "
+              },
+              {
+                name: "conditions",
+                type: "input",
+                message: "Condition: "
+              },{
+                name: "location",
+                type: "list",
+                message: "Choose Location",
+                choices: locations
+              }      
+            ]).then(function(answer) {
+              //do some salary logic
+              var source = 1;
+              var purpose = "sell";
+
+
+              connection.query(
+                "INSERT INTO car SET ?",
+                {
+                  VIN: answer.VIN,
+                  loc_address: answer.location,
+                  ma_ssn: ssn,
+                  source: source,
+                  purpose: purpose,
+                  type: answer.type,
+                  make: answer.make,
+                  model: answer.model,
+                  year: answer.year,
+                  paint: answer.paint,
+                  transmission: answer.transmission,
+                  mileage: answer.mileage,
+                  conditions: answer.conditions
+
+                },
+                function(err) {
+                  if (err) throw err;
+                  
+                  //if no err, will go back to login, now the employee should hit the returning employee. 
+                  console.log("Your car was inserted correctly!");
+                  // re-prompt the user for if they want to bid or post
+                  managerMain();          
+                })
+            });
         } else if(answer.ManagerMenu == "Remove Car"){
           //remove car from car table
+          //removeCar();
         } else if(answer.ManagerMenu == "Modify Car"){
-          //modify car no based on VIN
+          //modify car's price
         } else{
           console.log("ooPS Should not be here at all!")
         }
       });
 }
 
-function mechanicMain(){
+function mechanicMain(ssn){
   console.log("welcome to mechanic Main");
   //show all of the service instances with this mechanic ssn
+  inquirer.prompt({
+        name: "mechanicMenu",
+        type: "list",
+        message: "What would you like to do?",
+        choices: ["View Schedule"]
+      })
+      .then(function(answer) {
+        if(answer.receptionistMenu == "View Schedule"){         
+          connection.query("SELECT * FROM service_instance", function(err, results) {
+           if (err){throw err;}
+           var toDisplay = [];
+           var header = "Customer UserName  bID Price Time VIN" + '\n' + "";
+            for (var i = 0; i < results.length; i++) {
+             if (ssn == results[i].me_ssn) {
+               var toReturn = "";
+             
+               toReturn = toReturn + results[i].cu_username + " ";
+               toReturn = toReturn + results[i].b_id + " ";
+               toReturn = toReturn + results[i].price + " ";
+               toReturn = toReturn + results[i].time_book + " ";
+               toReturn = toReturn + results[i].car_VIN;
+
+               toDisplay.push(toReturn);
+             }
+               
+             }
+           toDisplay.unshift(header);
+
+           for(var i = 0; i<toDisplay.length; i++){
+
+             console.log(toDisplay[i]);
+             console.log("---------------------------------------------------");
+           }
+         }); 
+      }
+    });
 }
 //ALL OF CUSTOMER
 
@@ -352,7 +544,7 @@ function createCustomer(){
           //if no err, will go back to login, now the employee should hit the returning employee. 
           console.log("Your employee was created successfully!");
           // re-prompt the user for if they want to bid or post
-          start();
+          CustomerMain();
         }
       );
     });
@@ -378,9 +570,28 @@ function CustomerLogin() {
     ])
     .then(function(answer) {
       // when finished prompting, insert a new item into the db with that info\
-     if(answer.username == username && answer.password == password){
-       CustomerMain();
-     } 
+         connection.query("SELECT username, password FROM customer", function(err, results) {
+       if (err){
+         throw err;
+       } 
+         var usernameArray = [];
+         var passwordArray = [];
+          for (var i = 0; i < results.length; i++) {
+            usernameArray.push(results[i].username);
+            passwordArray.push(results[i].password);
+          }
+          for (var i = 0; i < usernameArray.length; i++){
+            if(answer.username == usernameArray[i] && answer.pasword == passwordArray[i]){
+               CustomerMain();
+               i = usernameArray.length++;
+            } else{
+                if(i == usernameArray.length-1){
+                  console.log("your username and/or ssn is incorrect, please try again");
+                  Customerlogin();
+                }
+              }
+          }          
+        });
     });
 }
 

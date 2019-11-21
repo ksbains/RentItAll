@@ -44,12 +44,12 @@ function Employee(){
       .prompt({
         name: "userType",
         type: "list",
-        message: "",
+        message: "Are you a new or returning Employee",
         choices: ["New Employee", "Returning Employee"]
       })
       .then(function(answer) {
         // based on their answer, either call the createEmployee or the signInEmployee  functions
-        if (answer.postOrBid.toUpperCase() === "NEW EMPLOYEE") {
+        if (answer.userType.toUpperCase() === "NEW EMPLOYEE") {
           createEmployee();
         }
         else {
@@ -57,17 +57,21 @@ function Employee(){
           Employeelogin();
         }
       });
- }
+ };
 
 function createEmployee(){
-  
+  console.log("welcome new Employee!");
   var locations;
-
-    locations = ["springfield", "cuba", "san jose"]
-    managers = ["123456789", "012345678"]
-
+  locations = ["123 Irvington St", "123 Washington St"];
+  managers = ["123456789", "123456786"];
   inquirer
     .prompt([
+       {
+        name: "position",
+        type: "list",
+        message: "What position are you?",
+        choices: ["Mechanic", "Manager", "Receptionist"]
+      },
       {
         name: "SSN",
         type: "input",
@@ -77,12 +81,8 @@ function createEmployee(){
         name: "name",
         type: "input",
         message: "name"
-      },{
-        name: "position",
-        type: "list",
-        message: "What position are you?",
-        choices: ["Mechanic", "Manager", "Receptionist"]
-      },{
+      },
+      {
         name: "location",
         type: "list",
         message: "What location are you at?",
@@ -93,67 +93,19 @@ function createEmployee(){
         type: "list",
         message: "Who is your manager?",
         choices: managers
-      }
-    ])
-    .then(function(answer) {
-//do some salary logic
+      }]).then(function(answer) {
       var salary = 0;
       if(answer.position == "Mechanic"){
         salary = 65000;
-          connection.query(
-          "INSERT INTO mechanic SET ?",
-          {
-            //this is the meachinc's ssn
-            m_ssn: answer.SSN,
-            //ma_ssn is the manager ssn
-            ma_ssn: answer.manager,
-          },
-          function(err) {
-            if (err) throw err;
-            
-            //if no err, will go back to login, now the employee should hit the returning employee. 
-            console.log("Your mechanic was created successfully!");
-            // re-prompt the user for if they want to bid or post
-          }
-        );
       } else if(answer.position == "Receptionist"){
         salary = 45000;
-        connection.query(
-          "INSERT INTO receptionist SET ?",
-          {
-            //this is the meachinc's ssn
-            r_ssn: answer.SSN,
-            //ma_ssn is the manager ssn
-            ma_ssn: answer.manager,
-          },
-          function(err) {
-            if (err) throw err;
-            
-            //if no err, will go back to login, now the employee should hit the returning employee. 
-            console.log("Your receptionist was created successfully!");
-            // re-prompt the user for if they want to bid or post
-          }
-        );
       } else if(answer.position == "Manager"){
         salary = 95000;
-        connection.query(
-          "INSERT INTO manager SET ?",
-          {
-            //this is the meachinc's ssn
-            mgr_ssn: answer.SSN,
-          },
-          function(err) {
-            if (err) throw err;
-            //if no err, will go back to login, now the employee should hit the returning employee. 
-            console.log("Your manager was created successfully!");
-            // re-prompt the user for if they want to bid or post
-          }
-        );
       }else{
         salary = -1;
       }
       connection.query(
-        "INSERT INTO employees SET ?",
+        "INSERT INTO employee SET ?",
         {
           SSN: answer.SSN,
           name: answer.name,
@@ -167,56 +119,160 @@ function createEmployee(){
           // re-prompt the user for if they want to bid or post
         }
       );
+      //insert into sub tables
+      if(answer.position == "Mechanic"){
+          connection.query(
+          "INSERT INTO mechanic SET ?",
+          {
+            //this is the meachinc's ssn
+            m_ssn: answer.SSN,
+            //ma_ssn is the manager ssn
+            ma_ssn: answer.manager,
+          },
+          function(err) {
+            if (err) throw err;
+            //if no err, will go back to login, now the employee should hit the returning employee. 
+            console.log("Your mechanic was created successfully!");
+            // re-prompt the user for if they want to bid or post
+          }
+        );
+          mechanicMain();
+      } else if(answer.position == "Receptionist"){
+        connection.query(
+          "INSERT INTO receptionist SET ?",
+          {
+            //this is the meachinc's ssn
+            r_ssn: answer.SSN,
+            //ma_ssn is the manager ssn
+            ma_ssn: answer.manager,
+          },
+          function(err) {
+            if (err) throw err;
+            //if no err, will go back to login, now the employee should hit the returning employee. 
+            console.log("Your receptionist was created successfully!");
+            // re-prompt the user for if they want to bid or post
+          }
+        );
+        receptionistMain();
+      } else if(answer.position == "Manager"){
+        connection.query(
+          "INSERT INTO manager SET ?",
+          {
+            //this is the meachinc's ssn
+            mgr_ssn: answer.SSN,
+          },
+          function(err) {
+            if (err) throw err;
+            //if no err, will go back to login, now the employee should hit the returning employee. 
+            console.log("Your manager was created successfully!");
+            // re-prompt the user for if they want to bid or post
+          }
+        );
+        managerMain();
+      }else{
+        console.log("all of the sub menues have failed and should not end up here");
+      }
     });
-
-    start();
 }
 
 function Employeelogin() {
-  // prompt for info about the item being put up for auction
-  var username = "kb";
-  var password = "";
-
+  // prompt for info about the employee to login
   inquirer.prompt([
       {
-        name: "username",
+        name: "name",
         type: "input",
-        message: "username"
+        message: "name"
       },
       {
-        name: "password",
-        type: "password",
-        message: "password"
+        name: "SSN",
+        type: "input",
+        message: "SSN"
       }
     ]).then(function(answer) {
-      // when finished prompting, insert a new item into the db with that info\
-     // if(answer.username == username && answer.password == password){
-     //   EmployeeMain();
-     // }
-     connection.query("SELECT username,password FROM employee", function(err, results) {
+     connection.query("SELECT name, SSN, salary FROM employee", function(err, results) {
        if (err){
          throw err;
        } 
-         var usernameArray = [];
-         var passwordArray = [];
-            for (var i = 0; i < results.length; i++) {
-              usrenameArray.push(results[i].username);
-              passwordArray.push(results[i].password);
-            }
-            for (var i = 0; i < usernameArray.length; i++){
-              if(answer.username == username[i] && answer.password == username[i]){
-                EmployeeMain();
-              }else {
-                console.log("your usrname and/or password is incorrect, please try again");
-                Employeelogin();
+         var nameArray = [];
+         var ssnArray = [];
+         var salaryArray = [];
+          for (var i = 0; i < results.length; i++) {
+            nameArray.push(results[i].name);
+            ssnArray.push(results[i].SSN);
+            salaryArray.push(results[i].salary);
+          }
+          for (var i = 0; i < nameArray.length; i++){
+            if(answer.name == nameArray[i] && answer.SSN == ssnArray[i]){
+              if(salaryArray[i] == 45000){
+                // this is for the receptionist
+                receptionistMain();
+                i = nameArray.length++;
+              } else if(salaryArray[i] == 65000){
+                // this is for the mechanic
+                mechanicMain();
+                i = nameArray.length++;
+              } else if(salaryArray[i] == 95000){
+                // this is for the manager
+                // might have to pass the ssn like this: managerMain(answer.SSN)
+                managerMain();
+                i = nameArray.length++;
+              } 
+            } else{
+                if(i == nameArray.length-1){
+                  console.log("your username and/or ssn is incorrect, please try again");
+                  Employeelogin();
+                }
               }
-            }
+          }          
         });
-    }
+    });
 }  
 
-function EmployeeMain(){
-  
+function receptionistMain(){
+  console.log("welcome to receptionist Main");
+  inquirer.prompt({
+        name: "receptionistMenu",
+        type: "list",
+        message: "What would you like to do?",
+        choices: ["View Customer", "Add Customer"]
+      })
+      .then(function(answer) {
+        if(answer.receptionistMenu == "View Customer"){
+          //show all customers? or maybe just one's based on teh re_ssn?
+        } else if(answer.receptionistMenu == "Add Customer"){
+          //should be same logic as create customer
+        } else{
+          console.log("ooPS Should not be here at all!")
+        }
+      });
+}
+
+function managerMain(){
+  console.log("welcome to manager Main");
+  inquirer.prompt({
+        name: "ManagerMenu",
+        type: "list",
+        message: "What would you like to do?",
+        choices: ["View Car", "Add Car", "Remove Car", "Modify Car"]
+      })
+      .then(function(answer) {
+        if(answer.ManagerMenu == "View Car"){
+           // list the car table using connectino
+        } else if(answer.ManagerMenu == "Add Car"){
+          //same logic as cusotmer adding car, except now fill in this ms_ssn
+        } else if(answer.ManagerMenu == "Remove Car"){
+          //remove car from car table
+        } else if(answer.ManagerMenu == "Modify Car"){
+          //modify car no based on VIN
+        } else{
+          console.log("ooPS Should not be here at all!")
+        }
+      });
+}
+
+function mechanicMain(){
+  console.log("welcome to mechanic Main");
+  //show all of the service instances with this mechanic ssn
 }
 //ALL OF CUSTOMER
 
@@ -372,7 +428,7 @@ function customerBuy(){
 }
 
 function customerSell() {
-  locations = ["springfield", "cuba", "san jose"] 
+locations = ["123 Irvington St", "123 Washington St"];
   inquirer
     .prompt([
       {
@@ -486,8 +542,8 @@ function customerRent(){
 }
 
 function customerRentOut(){
-  locations = ["springfield", "cuba", "san jose"]
-  var maSSN = "012345678";
+  locations = ["123 Irvington St", "123 Washington St"];
+  var maSSN = "123456789";
   var source = 0;
   var purpose = "rent"
 
@@ -602,7 +658,7 @@ inquirer
 }
 
 function customerMaintenanceSchedule(){
-  locations = ["springfield", "cuba", "san jose"]
+  locations = ["123 Irvington St", "123 Washington St"];
   inquirer
       .prompt({
         name: "maintenanceMenu",

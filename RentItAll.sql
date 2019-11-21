@@ -1,3 +1,8 @@
+DROP DATABASE IF EXISTS RentItAll_DB;
+CREATE DATABASE RentItAll_DB;
+
+USE RentItAll_DB;
+
 CREATE TABLE customer(
   username VARCHAR(100) NOT NULL,
   password VARCHAR(45) NOT NULL,

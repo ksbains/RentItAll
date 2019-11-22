@@ -7,7 +7,7 @@ CREATE TABLE customer(
   username VARCHAR(100) NOT NULL,
   password VARCHAR(45) NOT NULL,
   name VARCHAR(100) NOT NULL,
-  P_number integer NOT NULL,
+  P_number VARCHAR(15) NOT NULL,
   address VARCHAR(100) NOT NULL,
   PRIMARY KEY (username)
 );

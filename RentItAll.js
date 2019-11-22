@@ -279,13 +279,63 @@ function receptionistMain(ssn){
              }
              console.log(toDisplay);
            });
-          
+          receptionistMain(ssn);
         } else if(answer.receptionistMenu == "Add Customer"){
-          //should be same logic as create customer and then add to the assits table
-        } else{
-          console.log("ooPS Should not be here at all!")
-        }
-      });
+              
+          inquirer.prompt([
+            {
+              name: "username",
+              type: "input",
+              message: "What is your username"
+            },
+            {
+              name: "password",
+              type: "input",
+              message: "What is your password",
+              
+            },
+            {
+              name: "name",
+              type: "input",
+              message: "What is your name"
+            },
+            {
+              name: "address",
+              type: "input",
+              message: "What is your address"
+            },
+            {
+              name: "phone_number",
+              type: "input",
+              message: "What is your phone_number"
+            }
+          ])
+          .then(function(answer) {
+            //do some salary logic
+
+            connection.query(
+              "INSERT INTO customer SET ?",
+              {
+                username: answer.username,
+                password: answer.password,
+                name: answer.name,
+                address: answer.address,
+                P_number: answer.phone_number
+              },
+              function(err) {
+                if (err) throw err;
+                
+                //if no err, will go back to login, now the employee should hit the returning employee. 
+                console.log("Your employee was created successfully!");
+                // re-prompt the user for if they want to bid or post
+                receptionistMain(ssn)
+              }
+            );
+          });
+    } else{
+      console.log("ooPS Should not be here at all!")
+    }
+  });
 }
 
 function managerMain(ssn){
@@ -300,6 +350,7 @@ function managerMain(ssn){
         if(answer.ManagerMenu == "View Car"){
            // list the car table using connectino
            viewCars();
+           managerMain(ssn)
         } else if(answer.ManagerMenu == "Add Car"){
           //same logic as cusotmer adding car, except now fill in this ms_ssn
           var locations = [];
@@ -400,8 +451,10 @@ function managerMain(ssn){
         } else if(answer.ManagerMenu == "Remove Car"){
           //remove car from car table
           //removeCar();
+          //managerMain();
         } else if(answer.ManagerMenu == "Modify Car"){
           //modify car's price
+          //managerMain();
         } else{
           console.log("ooPS Should not be here at all!")
         }
@@ -510,7 +563,7 @@ function createCustomer(){
           password: answer.password,
           name: answer.name,
           address: answer.address,
-          phone_number: answer.phone_number
+          P_number: answer.phone_number
         },
         function(err) {
           if (err) throw err;
@@ -1031,27 +1084,32 @@ function writeReview(username){
 function checkReview(){
   var reviews = [];
   connection.query("SELECT * FROM review", function(err, results) {
-   if (err){
-     throw err;
-   }
-    for (var i = 0; i < results.length; i++) {      
-      reviews.push(results[i].content);
-    }     
-   });
-   var toDisplay = [];
-   var header = "Reviews" + '\n' + "";
+     if (err){
+       throw err;
+     }
+      for (var i = 0; i < results.length; i++) {      
+        reviews.push(results[i].content);
+      }     
+     });
+     
+     var toDisplay = [];
+     var header = "Reviews" + '\n' + "";
 
-  for (var i = 0; i < reviews.length; i++) {
-    
-    var toReturn = "";
-    toReturn = toReturn + results[i].content + '\n';
-    toDisplay.push(toReturn);
-  }
-  toDisplay.upshift(heasder);
-  for(var i = 0; i<toDisplay.length; i++){
-     console.log(toDisplay[i]);
-     console.log("---------------------------------------------------");
-   }
+    for (var i = 0; i < reviews.length; i++) {
+      
+      var toReturn = "";
+      toReturn = toReturn + results[i].content + '\n';
+      toDisplay.push(toReturn);
+    }
+    toDisplay.upshift(heasder);
+    for(var i = 0; i<toDisplay.length; i++){
+       console.log(toDisplay[i]);
+       console.log("---------------------------------------------------");
+     }
+}
+
+
+
 
 function customerLogout(){
   start();  
@@ -1062,10 +1120,8 @@ function viewCars() {
   connection.query("SELECT * FROM car", function(err, results) {
    if (err){throw err;}
    
-
    var toDisplay = [];
    var header = "Make Model Year VIN address" + '\n' + "";
-
     for (var i = 0; i < results.length; i++) {
      
        var toReturn = "";
@@ -1079,9 +1135,7 @@ function viewCars() {
        toDisplay.push(toReturn);
    }
    toDisplay.unshift(header);
-
    for(var i = 0; i<toDisplay.length; i++){
-
      console.log(toDisplay[i]);
      console.log("---------------------------------------------------");
    }

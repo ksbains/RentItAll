@@ -601,7 +601,7 @@ function CustomerLogin() {
           for (var i = 0; i < results.length; i++){
             if(answer.username == results[i].username && answer.password == results[i].password){
                CustomerMain(results[i].username);
-               i = usernameArray.length++;
+               i = results.length++;
             }else {
               if(i == usernameArray.length-1){
                 console.log("your username and/or ssn is incorrect, please try again");

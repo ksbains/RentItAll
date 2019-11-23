@@ -757,7 +757,7 @@ var locations = [];
         {
           VIN: answer.VIN,
           loc_address: answer.location,
-          ma_ssn: maSSN,
+          ma_ssn: answer.manager,
           source: source,
           purpose: purpose,
           type: answer.type,
@@ -819,6 +819,17 @@ function customerRent(){
 }
 
 function customerRentOut(){
+  var managers = [];
+  var managersID = [];
+  connection.query("SELECT name, mgr_ssn FROM employee INNER JOIN manager ON employee.SSN = manager.mgr_ssn", function(err, results) {
+   if (err){
+     throw err;
+   }
+    for (var i = 0; i < results.length; i++) {      
+      managers.push(results[i].name);
+      managersID.push(results[i].mgr_ssn);
+    }    
+   });
   var locations = [];
   connection.query("SELECT address FROM company_locations", function(err, results) {
    if (err){
@@ -828,7 +839,7 @@ function customerRentOut(){
       locations.push(results[i].address);
     }     
    });
-  var maSSN = "123456789";
+  //var maSSN = "123456789";
   var source = 0;
   var purpose = "rent"
 
@@ -886,7 +897,18 @@ function customerRentOut(){
         name: "conditions",
         type: "input",
         message: "Condition: "
-      },      
+      },
+      {
+        name: "location",
+        type: "list",
+        message: "Choose Location",
+        choices: locations
+      },{
+        name: "manager",
+        type: "list",
+        message: "Choose Manger",
+        choices: managersID
+      }      
     ]).then(function(answer) {
       //do some salary logic
 
@@ -894,8 +916,8 @@ function customerRentOut(){
         "INSERT INTO car SET ?",
         {
           VIN: answer.VIN,
-          location: location,
-          maSSN: maSSN,
+          loc_address: answer.location,
+          ma_ssn: answer.manager,
           source: source,
           purpose: purpose,
           type: answer.type,

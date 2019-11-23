@@ -947,7 +947,7 @@ inquirer
         name: "maintenanceMenu",
         type: "list",
         message: "what would you like to do",
-        choices: ["Schedule", "Check Current"]
+        choices: ["Schedule", "Check Current", "Return"]
       })
       .then(function(answer) {
         if (answer.maintenanceMenu == "Schedule") {
@@ -1066,7 +1066,7 @@ function customerReview(username){
         name: "reviewMenu",
         type: "list",
         message: "What Service would you like",
-        choices: ["Check Reviews", "Write Reviews"]
+        choices: ["Check Reviews", "Write Reviews", "Return"]
       })
       .then(function(answer) {
         if (answer.reviewMenu == "Check Reviews") {
@@ -1075,6 +1075,8 @@ function customerReview(username){
         } else if(answer.reviewMenu == "Write Reviews") {
           writeReview(username);
           //Implement
+        } else if(answer.reviewMenu == "Return") {
+          CustomerMain();
         } else{
           console.log("oh no, not good");
         }
@@ -1155,7 +1157,7 @@ function checkReview(){
       toReturn = toReturn + results[i].content + '\n';
       toDisplay.push(toReturn);
     }
-    toDisplay.upshift(heasder);
+    toDisplay.upshift(header);
     for(var i = 0; i<toDisplay.length; i++){
        console.log(toDisplay[i]);
        console.log("---------------------------------------------------");

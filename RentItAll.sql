@@ -222,7 +222,7 @@ VALUES  ('123456789', 'mgr1', '123 Washington Sq', '200000'),
         ('123456786', 'mgr2', '123 Irvington St', '200000');
 
 INSERT INTO manager
-VALUES  ('138'),
+VALUES  ('138'),  
         ('123456786');
 
 INSERT INTO car

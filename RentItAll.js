@@ -650,7 +650,7 @@ function customerBuy(){
       })
       .then(function(answer) {
         if (answer.buyMenu == "List cars") {
-         viewCars()
+         buyCars()
         } else if(answer.buyMenu == "Filter") {
           console.log("Filter!!!!!!");
           //Implement
@@ -749,6 +749,9 @@ var locations = [];
         choices: managersID
       }      
     ]).then(function(answer) {
+      
+      //manager logic
+
       //do some salary logic
       var source = 0;
       var purpose = "sell";
@@ -757,7 +760,7 @@ var locations = [];
         {
           VIN: answer.VIN,
           loc_address: answer.location,
-          ma_ssn: maSSN,
+          ma_ssn: answer.manager,
           source: source,
           purpose: purpose,
           type: answer.type,
@@ -768,7 +771,6 @@ var locations = [];
           transmission: answer.transmission,
           mileage: answer.mileage,
           conditions: answer.conditions
-
         },
         function(err) {
           if (err) throw err;
@@ -1176,59 +1178,51 @@ function viewCars() {
 
 
 function buyCars(){
+  var header = "Make Model Year VIN address" + '\n' + "";
+  var toDisplay = [];
+  var VINBought = "";
+  
   connection.query("SELECT * FROM car", function(err, results) {
    if (err){throw err;}
-   
-   var toDisplay = [];
-   var header = "Make Model Year VIN address" + '\n' + "";
+    
     for (var i = 0; i < results.length; i++) {
-     
        var toReturn = "";
-     
+       toReturn = toReturn + results[i].VIN + " ";
        toReturn = toReturn + results[i].make + " ";
        toReturn = toReturn + results[i].model + " ";
        toReturn = toReturn + results[i].year + " ";
-       toReturn = toReturn + results[i].VIN + " ";
-       toReturn = toReturn + results[i].loc_address + '\n';
-
+       toReturn = toReturn + results[i].loc_address;
        toDisplay.push(toReturn);
    }
-   console.log("")
-  
+   toDisplay.unshift(header);
   inquirer
       .prompt({
         name: "cars",
         type: "list",
         message: "Which Car would you like to buy?",
-        choices: [1,2,3,4,5]
+        choices: toDisplay
       }).then(function(answer) {
-        console.log("here is your review: " + answer.review);
-        connection.query(
-          "INSERT INTO review SET ?",
-          {
-            r_id: id,
-            stars: answer.stars,
-            content: answer.review,
-            cu_username: username, 
-            loc_address: answer.location
-          },
-          function(err) {
-            if (err) throw err;
-            
-            //if no err, will go back to login, now the employee should hit the returning employee. 
-            console.log("Your car was inserted correctly!");
-            // re-prompt the user for if they want to bid or post
-            managerMain();          
-          })
-        
-        console.log("you review has been entered");
-        CustomerMain();
-      });
-  });
+          var res = answer.cars.split(" ");
+          console.log("this is the vin, for the car you just bought" + res[0]);
+          VINBought = res[0];
+           console.log("the vin is: " + VINBought);
+
+          //var sql = "DELETE FROM car WHERE VIN = '" + VINBought +"'";
+          //DHB100ZASFG
+          //"DELETE FROM car WHERE VIN = '" + VINBought +"'",
+          connection.query(
+            "Delete from car where VIN = " + mysql.escape(VINBought),
+            function(err) {
+              if (err) throw err;
+              //if no err, will go back to login, now the employee should hit the returning employee. 
+              console.log("Thanks for buying the car, it is now off of our lot");
+              // re-prompt the user for if they want to bid or post
+              CustomerMain();
+            });
+    });    
+  }); 
 }
-
-
-
+  
 
 
 

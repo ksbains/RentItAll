@@ -47,7 +47,7 @@ CREATE TABLE manager(
 CREATE TABLE car(
   VIN VARCHAR(100) NOT NULL,
   loc_address VARCHAR(100) NOT NULL,
-  ma_ssn char(9),
+  ma_ssn char(9),                    
   source bit not null,
   purpose varchar(10) not null,
   type VARCHAR(45) NOT NULL,
@@ -222,7 +222,7 @@ VALUES  ('123456789', 'mgr1', '123 Washington Sq', '200000'),
         ('123456786', 'mgr2', '123 Irvington St', '200000');
 
 INSERT INTO manager
-VALUES  ('123456789'),
+VALUES  ('138'),
         ('123456786');
 
 INSERT INTO car

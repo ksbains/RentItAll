@@ -83,7 +83,6 @@ function createEmployee(){
     }     
    }); 
   
-  managers = ["123456789", "123456786"];
   inquirer
     .prompt([
        {
@@ -626,7 +625,7 @@ function CustomerMain(username) {
         if (answer.menu == "buy") {
           customerBuy();  
         } else if (answer.menu == "sell") {
-          customerSell();  
+          customerSell(username);  
         } else if (answer.menu == "rent") {
           customerRent();  
         } else if (answer.menu == "rentout") {
@@ -664,7 +663,20 @@ function customerBuy(){
       });  
 }
 
-function customerSell() {
+function customerSell(username) {
+var managers = [];
+  var managersID = [];
+  connection.query("SELECT name, mgr_ssn FROM employee INNER JOIN manager ON employee.SSN = manager.mgr_ssn", function(err, results) {
+   if (err){
+     throw err;
+   }
+    for (var i = 0; i < results.length; i++) {      
+      managers.push(results[i].name);
+      managersID.push(results[i].mgr_ssn);
+    }     
+   });
+
+
 var locations = [];
   connection.query("SELECT address FROM company_locations", function(err, results) {
    if (err){
@@ -722,23 +734,29 @@ var locations = [];
         type: "input",
         message: "Condition: "
       },{
+        name: "price",
+        type: "input",
+        message: "Price: "
+      },{
         name: "location",
         type: "list",
         message: "Choose Location",
         choices: locations
+      },{
+        name: "manager",
+        type: "list",
+        message: "Choose Manger",
+        choices: managersID
       }      
     ]).then(function(answer) {
       //do some salary logic
-      var maSSN = "012345678";
       var source = 0;
       var purpose = "sell";
-
-
       connection.query(
         "INSERT INTO car SET ?",
         {
           VIN: answer.VIN,
-          loc_address: location,
+          loc_address: answer.location,
           ma_ssn: maSSN,
           source: source,
           purpose: purpose,
@@ -758,8 +776,22 @@ var locations = [];
           //if no err, will go back to login, now the employee should hit the returning employee. 
           console.log("Your car was inserted correctly!");
           // re-prompt the user for if they want to bid or post
-          CustomerMain();          
         })
+
+      connection.query(
+        "INSERT INTO sell SET ?",
+        {
+          cu_username: username,
+          price: answer.price,
+          car_VIN: answer.VIN
+          
+        },
+        function(err) {
+          if (err) throw err;
+            
+            CustomerMain();          
+         });
+
     });
 }
 
@@ -1142,6 +1174,58 @@ function viewCars() {
  });
 }
 
+
+function buyCars(){
+  connection.query("SELECT * FROM car", function(err, results) {
+   if (err){throw err;}
+   
+   var toDisplay = [];
+   var header = "Make Model Year VIN address" + '\n' + "";
+    for (var i = 0; i < results.length; i++) {
+     
+       var toReturn = "";
+     
+       toReturn = toReturn + results[i].make + " ";
+       toReturn = toReturn + results[i].model + " ";
+       toReturn = toReturn + results[i].year + " ";
+       toReturn = toReturn + results[i].VIN + " ";
+       toReturn = toReturn + results[i].loc_address + '\n';
+
+       toDisplay.push(toReturn);
+   }
+   console.log("")
+  
+  inquirer
+      .prompt({
+        name: "cars",
+        type: "list",
+        message: "Which Car would you like to buy?",
+        choices: [1,2,3,4,5]
+      }).then(function(answer) {
+        console.log("here is your review: " + answer.review);
+        connection.query(
+          "INSERT INTO review SET ?",
+          {
+            r_id: id,
+            stars: answer.stars,
+            content: answer.review,
+            cu_username: username, 
+            loc_address: answer.location
+          },
+          function(err) {
+            if (err) throw err;
+            
+            //if no err, will go back to login, now the employee should hit the returning employee. 
+            console.log("Your car was inserted correctly!");
+            // re-prompt the user for if they want to bid or post
+            managerMain();          
+          })
+        
+        console.log("you review has been entered");
+        CustomerMain();
+      });
+  });
+}
 
 
 

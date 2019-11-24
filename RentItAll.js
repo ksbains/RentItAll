@@ -945,8 +945,21 @@ function customerRentOut(){
           console.log("Your car was inserted correctly!");
           // re-prompt the user for if they want to bid or post
           CustomerMain();          
-        })
-      })
+        });
+        connection.query(
+          "INSERT INTO sell SET ?",
+          {
+            cu_username: username,
+            price: answer.price,
+            car_VIN: answer.VIN
+            
+          },
+          function(err) {
+            if (err) throw err;
+              
+              CustomerMain();          
+           });
+      });
   }
 
 function customerMaintenance(username){

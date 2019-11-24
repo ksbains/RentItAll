@@ -49,6 +49,7 @@ CREATE TABLE car(
   loc_address VARCHAR(100) NOT NULL,
   ma_ssn char(9),                    
   source bit not null,
+  price VARCHAR(10) not null,
   purpose varchar(10) not null,
   type VARCHAR(45) NOT NULL,
   make VARCHAR(45) NOT NULL,
@@ -65,7 +66,7 @@ CREATE TABLE car(
     on delete set null on update cascade
 );
 
-CREATE TABLE rent_out(
+CREATE TABLE rent_out(  
   cu_username VARCHAR(100) NOT NULL,
   car_VIN VARCHAR(100) NOT NULL,
   price VARCHAR(100) NOT NULL,

@@ -602,7 +602,7 @@ function CustomerLogin() {
                CustomerMain(results[i].username);
                i = results.length++;
             }else {
-              if(i == usernameArray.length-1){
+              if(i == results.length-1){
                 console.log("your username and/or ssn is incorrect, please try again");
                 Customerlogin();
               }
@@ -623,13 +623,13 @@ function CustomerMain(username) {
       })
       .then(function(answer) {
         if (answer.menu == "buy") {
-          customerBuy();  
+          customerBuy(username);  
         } else if (answer.menu == "sell") {
           customerSell(username);  
         } else if (answer.menu == "rent") {
-          customerRent();  
+          customerRent(username);  
         } else if (answer.menu == "rentout") {
-          customerRentOut();  
+          customerRentOut(username);  
         } else if (answer.menu == "maintenance") {
           customerMaintenance(username);
         } else if (answer.menu == "review") {
@@ -640,7 +640,7 @@ function CustomerMain(username) {
       });  
 }
 
-function customerBuy(){
+function customerBuy(username){
   inquirer
       .prompt({
         name: "buyMenu",
@@ -650,13 +650,13 @@ function customerBuy(){
       })
       .then(function(answer) {
         if (answer.buyMenu == "List cars") {
-         buyCars()
+         buyCars(username)
         } else if(answer.buyMenu == "Filter") {
           console.log("Filter!!!!!!");
           //Implement
           
         } else if(answer.buyMenu == "Return") {
-          CustomerMain();
+          CustomerMain(username);
         } else{
           console.log("oh no, not good");
         }
@@ -736,7 +736,7 @@ var locations = [];
       },{
         name: "price",
         type: "input",
-        message: "Price: "
+        message: "Price for Car: "
       },{
         name: "location",
         type: "list",
@@ -762,6 +762,7 @@ var locations = [];
           loc_address: answer.location,
           ma_ssn: answer.manager,
           source: source,
+          price: answer.price,
           purpose: purpose,
           type: answer.type,
           make: answer.make,
@@ -780,19 +781,19 @@ var locations = [];
           // re-prompt the user for if they want to bid or post
         })
 
-      connection.query(
-        "INSERT INTO sell SET ?",
-        {
-          cu_username: username,
-          price: answer.price,
-          car_VIN: answer.VIN
+      // connection.query(
+      //   "INSERT INTO sell SET ?",
+      //   {
+      //     cu_username: username,
+      //     price: answer.price,
+      //     car_VIN: answer.VIN
           
-        },
-        function(err) {
-          if (err) throw err;
+      //   },
+      //   function(err) {
+      //     if (err) throw err;
             
-            CustomerMain();          
-         });
+      //       CustomerMain();          
+      //    });
 
     });
 }
@@ -807,8 +808,7 @@ function customerRent(){
       })
       .then(function(answer) {
         if (answer.rentMenu == "List cars") {
-         console.log("these are all of the cars!")   
-         viewCars();
+         rentCars();
         } else if(answer.rentMenu == "Filter") {
           console.log("Filter!!!!!!");
           //Implement
@@ -876,6 +876,11 @@ function customerRentOut(){
         type: "input",
         message: "Year: "
       },
+      {
+        name: "price",
+        type: "input",
+        message: "Price per day: "
+      },
 
       {
         name: "paint",
@@ -921,6 +926,7 @@ function customerRentOut(){
           loc_address: answer.location,
           ma_ssn: answer.manager,
           source: source,
+          price: answer.price,
           purpose: purpose,
           type: answer.type,
           make: answer.make,
@@ -1021,18 +1027,17 @@ function customerMaintenanceSchedule(){
       .then(function(answer) {
         var price = 0;
         if (answer.maintenanceMenu == "Schedule") {
-         console.log("oh goody! oil change");
          price = 50;
         } else if(answer.maintenanceMenu == "Tire Roatation") {
-          console.log("Tire rotation");
+          
           price = 20;
         } else if(answer.maintenanceMenu == "Brake") {
-          console.log("Brake");
+          
           price = 200
         } else if(answer.maintenanceMenu == "Return") {
           CustomerMain();
         } else{
-          console.log("oh no, not good");
+          
         }
 
         connection.query(
@@ -1201,16 +1206,19 @@ function viewCars() {
 }
 
 
-function buyCars(){
+function buyCars(username){
   var header = "Make Model Year VIN address" + '\n' + "";
   var toDisplay = [];
   var VINBought = "";
   
-  connection.query("SELECT * FROM car", function(err, results) {
+  connection.query("SELECT * FROM car WHERE purpose = 'both' OR purpose = 'sell'", function(err, results) {
+    
    if (err){throw err;}
     
     for (var i = 0; i < results.length; i++) {
        var toReturn = "";
+
+       toReturn = toReturn + results[i].price + " ";
        toReturn = toReturn + results[i].VIN + " ";
        toReturn = toReturn + results[i].make + " ";
        toReturn = toReturn + results[i].model + " ";
@@ -1228,7 +1236,7 @@ function buyCars(){
       }).then(function(answer) {
           var res = answer.cars.split(" ");
           console.log("this is the vin, for the car you just bought" + res[0]);
-          VINBought = res[0];
+          VINBought = res[1];
            console.log("the vin is: " + VINBought);
 
           //var sql = "DELETE FROM car WHERE VIN = '" + VINBought +"'";
@@ -1241,12 +1249,61 @@ function buyCars(){
               //if no err, will go back to login, now the employee should hit the returning employee. 
               console.log("Thanks for buying the car, it is now off of our lot");
               // re-prompt the user for if they want to bid or post
-              CustomerMain();
+              CustomerMain(username);
             });
     });    
   }); 
 }
   
+function rentCars(username){
+  var header = "Make Model Year VIN address" + '\n' + "";
+  var toDisplay = [];
+  var VINRent = "";
+  
+  connection.query("SELECT * FROM car WHERE purpose = 'both' OR purpose = 'rent'", function(err, results) {
+    
+   if (err){throw err;}
+    
+    for (var i = 0; i < results.length; i++) {
+       var toReturn = "";
+
+       toReturn = toReturn + results[i].price + " ";
+       toReturn = toReturn + results[i].VIN + " ";
+       toReturn = toReturn + results[i].make + " ";
+       toReturn = toReturn + results[i].model + " ";
+       toReturn = toReturn + results[i].year + " ";
+       toReturn = toReturn + results[i].loc_address;
+       toDisplay.push(toReturn);
+   }
+   toDisplay.unshift(header);
+  inquirer
+      .prompt({
+        name: "cars",
+        type: "list",
+        message: "Which Car would you like to rent?",
+        choices: toDisplay
+      }).then(function(answer) {
+          var res = answer.cars.split(" ");
+          console.log("this is the vin, for the car you just rented" + res[0]);
+          VINRent = res[1];
+           console.log("the vin is: " + VINRent);
+          connection.query(
+            "Delete from car where VIN = " + mysql.escape(VINRent),
+            function(err) {
+              if (err) throw err;
+              //if no err, will go back to login, now the employee should hit the returning employee. 
+              console.log("Thanks for buying the car, it is now off of our lot");
+              // re-prompt the user for if they want to bid or post
+              CustomerMain(username);
+            });
+    });    
+  }); 
+}
+  
+
+
+
+
 
 
 

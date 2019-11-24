@@ -259,23 +259,19 @@ function receptionistMain(ssn){
       .then(function(answer) {
         if(answer.receptionistMenu == "View Customer"){
           // maybe just one's based on the re_ssn in the assits table?
-            connection.query("SELECT * FROM assist", function(err, results) {
+            connection.query("SELECT * FROM assist WHERE re_ssn = " + mysql.escape(ssn), function(err, results) {
              if (err){throw err;}
-             var cusotomerArray = [];
-             var recepArray = [];
-
-             for(var i = 0; i< results.length; i++){
-              customerArray.push(results[i].cu_username);
-              recepArray.push(results[i].re_ssn);
-             }
 
              var toDisplay = [];
+             toReturn = "";
+             header ="Receptionist  CustomerUsername";
 
-             for (var i = 0; i < recepArray.length; i++) {
-               if(recepArray[i] == ssn){
-                 toDisplay.push(customerArray[i]);
-               }
+             for (var i = 0; i < results.length; i++) {
+                toReturn = "";
+                toReturn = toReturn + results[i].re_ssn + results[i].cu_username;
+                toDisplay.push(customerArray[i]);
              }
+             toDisplay.unshift(header);
              console.log(toDisplay);
            });
           receptionistMain(ssn);
@@ -320,6 +316,21 @@ function receptionistMain(ssn){
                 name: answer.name,
                 address: answer.address,
                 P_number: answer.phone_number
+              },
+              function(err) {
+                if (err) throw err;
+                
+                //if no err, will go back to login, now the employee should hit the returning employee. 
+                console.log("The Customer was created successfully!");
+                // re-prompt the user for if they want to bid or post
+                receptionistMain(ssn)
+              }
+            );
+            connection.query(
+              "INSERT INTO customer SET ?",
+              {
+                cu_username: answer.username,
+                re_ssn: ssn
               },
               function(err) {
                 if (err) throw err;
@@ -449,11 +460,10 @@ function managerMain(ssn){
             });
         } else if(answer.ManagerMenu == "Remove Car"){
           //remove car from car table
-          //removeCar();
-          //managerMain();
+          removeCar(ssn);
         } else if(answer.ManagerMenu == "Modify Car"){
           //modify car's price
-          //managerMain();
+          modifyCar(ssn);
         } else{
           console.log("ooPS Should not be here at all!")
         }
@@ -1219,6 +1229,102 @@ function viewCars() {
  });
 }
 
+function removeCar(ssn){
+  var header = "Price VIN Make Model Year Purpose Location" + "";
+  var toDisplay = [];
+  var VINBought = "";
+  
+  connection.query("SELECT * FROM car ", function(err, results) {
+    
+   if (err){throw err;}
+    
+    for (var i = 0; i < results.length; i++) {
+       var toReturn = "";
+
+       toReturn = toReturn + results[i].price + " ";
+       toReturn = toReturn + results[i].VIN + " ";
+       toReturn = toReturn + results[i].make + " ";
+       toReturn = toReturn + results[i].model + " ";
+       toReturn = toReturn + results[i].year + " ";
+       toReturn = toReturn + results[i].purpose + " ";
+       toReturn = toReturn + results[i].loc_address;
+       toDisplay.push(toReturn);
+   }
+   toDisplay.unshift(header);
+  inquirer
+      .prompt({
+        name: "cars",
+        type: "list",
+        message: "Which Car would you like to remove?",
+        choices: toDisplay
+      }).then(function(answer) {
+          var res = answer.cars.split(" ");
+          console.log("this is the vin, for the car you just removed is: " + res[1]);
+          VINBought = res[1];
+           console.log("the vin is: " + VINBought);
+
+          connection.query(
+            "Delete from car where VIN = " + mysql.escape(VINBought),
+            function(err) {
+              if (err) throw err;
+              //if no err, will go back to login, now the employee should hit the returning employee. 
+              console.log("Thanks for buying the car, it is now off of our lot");
+              // re-prompt the user for if they want to bid or post
+              managerMain(ssn);
+            });
+    });    
+  });
+}
+
+function modifyCar(ssn){
+  var header = "Price VIN Make Model Year Purpose Location" + "";
+  var toDisplay = [];
+  var VINBought = "";
+  
+  connection.query("SELECT * FROM car ", function(err, results) {
+    
+   if (err){throw err;}
+    
+    for (var i = 0; i < results.length; i++) {
+       var toReturn = "";
+
+       toReturn = toReturn + results[i].price + " ";
+       toReturn = toReturn + results[i].VIN + " ";
+       toReturn = toReturn + results[i].make + " ";
+       toReturn = toReturn + results[i].model + " ";
+       toReturn = toReturn + results[i].year + " ";
+       toReturn = toReturn + results[i].purpose + " ";
+       toReturn = toReturn + results[i].loc_address;
+       toDisplay.push(toReturn);
+   }
+   toDisplay.unshift(header);
+  inquirer
+      .prompt([{
+        name: "cars",
+        type: "list",
+        message: "Which Car would you like change the price?",
+        choices: toDisplay
+      },{
+        name: "price",
+        type: "input",
+        message: "What is the new price?"
+      }]).then(function(answer) {
+          var res = answer.cars.split(" ");
+          console.log("this is the vin, for the car you just selected is: " + res[1]);
+          VINBought = res[1];
+          console.log("the vin is: " + VINBought);
+          connection.query(
+            "UPDATE car SET price = " + mysql.escape(answer.price) + "WHERE VIN = " + mysql.escape(VINBought),
+            function(err) {
+              if (err) throw err;
+              //if no err, will go back to login, now the employee should hit the returning employee. 
+              console.log("The car has been removed from the lot");
+              // re-prompt the user for if they want to bid or post
+              managerMain(ssn);
+            });
+        });    
+   });
+}
 
 function buyCars(username){
   var header = "Make Model Year VIN address" + '\n' + "";

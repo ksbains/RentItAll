@@ -582,7 +582,7 @@ function createCustomer(){
           //if no err, will go back to login, now the employee should hit the returning employee. 
           console.log("Your employee was created successfully!");
           // re-prompt the user for if they want to bid or post
-          CustomerMain();
+          CustomerMain(answer.username);
         }
       );
     });
@@ -767,6 +767,7 @@ var locations = [];
       //do some salary logic
       var source = 0;
       var purpose = "SELL";
+      var available = "yes"
       connection.query(
         "INSERT INTO car SET ?",
         {
@@ -783,7 +784,8 @@ var locations = [];
           paint: answer.paint,
           transmission: answer.transmission,
           mileage: answer.mileage,
-          conditions: answer.conditions
+          conditions: answer.conditions,
+          available : available
         },
         function(err) {
           if (err) throw err;
@@ -791,27 +793,28 @@ var locations = [];
           //if no err, will go back to login, now the employee should hit the returning employee. 
           console.log("Your car was inserted correctly!");
           // re-prompt the user for if they want to bid or post
-          CustomerMain(username); 
-        })
-
-      // connection.query(
-      //   "INSERT INTO sell SET ?",
-      //   {
-      //     cu_username: username,
-      //     price: answer.price,
-      //     car_VIN: answer.VIN
           
-      //   },
-      //   function(err) {
-      //     if (err) throw err;
+        })
+      var state = "sale";
+      connection.query(
+        "INSERT INTO car_relation SET ?",
+        {
+          cu_username: username,
+          car_VIN: answer.VIN,
+          state: state
+          
+        },
+        function(err) {
+          if (err) {throw err;}
             
-      //       CustomerMain();          
-      //    });
+            console.log("inserted into the car relation!")
+            CustomerMain(username); 
+         });
 
     });
 }
 
-function customerRent(){
+function customerRent(username){
   inquirer
       .prompt({
         name: "rentMenu",
@@ -821,19 +824,19 @@ function customerRent(){
       })
       .then(function(answer) {
         if (answer.rentMenu == "List cars") {
-         rentCars();
+         rentCars(username);
         } else if(answer.rentMenu == "Filter") {
           console.log("Filter!!!!!!");
           //Implement
         } else if(answer.rentMenu == "Return") {
-          CustomerMain();
+          CustomerMain(username);
         } else{
           console.log("oh no, not good");
         }
       });  
 }
 
-function customerRentOut(){
+function customerRentOut(username){
   var managers = [];
   var managersID = [];
   connection.query("SELECT name, mgr_ssn FROM employee INNER JOIN manager ON employee.SSN = manager.mgr_ssn", function(err, results) {
@@ -931,7 +934,7 @@ function customerRentOut(){
       }      
     ]).then(function(answer) {
       //do some salary logic
-
+      var available = "yes";
       connection.query(
         "INSERT INTO car SET ?",
         {
@@ -948,30 +951,31 @@ function customerRentOut(){
           paint: answer.paint,
           transmission: answer.transmission,
           mileage: answer.mileage,
-          conditions: answer.conditions
-
+          conditions: answer.conditions,
+          available: available
         },
         function(err) {
           if (err) throw err;
           
           //if no err, will go back to login, now the employee should hit the returning employee. 
-          console.log("Your car was inserted correctly!");
+          console.log("Your car was inserted  cars correctly!");
           // re-prompt the user for if they want to bid or post
-          CustomerMain(username);          
         });
-        // connection.query(
-        //   "INSERT INTO sell SET ?",
-        //   {
-        //     cu_username: username,
-        //     price: answer.price,
-        //     car_VIN: answer.VIN
+        var state = "rent";
+        connection.query(
+          "INSERT INTO car_relation SET ?",
+          {
+            cu_username: username,
+            car_VIN: answer.VIN,
+            state: state
             
-        //   },
-        //   function(err) {
-        //     if (err) throw err;
+          },
+          function(err) {
+            if (err) {throw err;}
               
-        //       CustomerMain();          
-        //    });
+              console.log("Your car was inserted into relation correctly!");
+              CustomerMain(username);          
+           });
       });
   }
 
@@ -1013,14 +1017,14 @@ inquirer
           });
 
         } else if(answer.maintenanceMenu == "Return") {
-          CustomerMain();
+          CustomerMain(username);
         } else{
           console.log("oh no, not good");
         }
       });  
 }
 
-function customerMaintenanceSchedule(){
+function customerMaintenanceSchedule(username){
   var meSSNs = [];
   connection.query("SELECT m_ssn FROM mechanic", function(err, results) {
    if (err){
@@ -1061,7 +1065,7 @@ function customerMaintenanceSchedule(){
           
           price = 200
         } else if(answer.maintenanceMenu == "Return") {
-          CustomerMain();
+          CustomerMain(username);
         } else{
           
         }
@@ -1079,7 +1083,7 @@ function customerMaintenanceSchedule(){
             //if no err, will go back to login, now the employee should hit the returning employee. 
             console.log("Your car was inserted correctly!");
             // re-prompt the user for if they want to bid or post
-            managerMain();          
+            customerMain(username);          
           })
       });
 }
@@ -1109,7 +1113,7 @@ function customerReview(username){
           writeReview(username);
           //Implement
         } else if(answer.reviewMenu == "Return") {
-          CustomerMain();
+          CustomerMain(username);
         } else{
           console.log("oh no, not good");
         }
@@ -1166,7 +1170,7 @@ function writeReview(username){
           })
         
         console.log("you review has been entered");
-        CustomerMain();
+        CustomerMain(username);
       });
 }
 
@@ -1214,7 +1218,7 @@ function viewCars() {
    if (err){throw err;}
    
    var toDisplay = [];
-   var header = "Make Model Year VIN address" + '\n' + "";
+   var header = "Price    Make   Model   Year  VIN   Purpose   Available  Location " + '\n' + "";
     for (var i = 0; i < results.length; i++) {
      
        var toReturn = "";
@@ -1224,6 +1228,8 @@ function viewCars() {
        toReturn = toReturn + results[i].model + " ";
        toReturn = toReturn + results[i].year + " ";
        toReturn = toReturn + results[i].VIN + " ";
+       toReturn = toReturn + results[i].purpose + " ";
+       toReturn = toReturn + results[i].available + " ";
        toReturn = toReturn + results[i].loc_address + '\n';
 
        toDisplay.push(toReturn);
@@ -1334,11 +1340,11 @@ function modifyCar(ssn){
 }
 
 function buyCars(username){
-  var header = "Make Model Year VIN address" + '\n' + "";
+  var header = "Price VIN Make Model Year Location" + '\n' + "";
   var toDisplay = [];
   var VINBought = "";
   
-  connection.query("SELECT * FROM car WHERE purpose = 'both' OR purpose = 'sell'", function(err, results) {
+  connection.query("SELECT * FROM car WHERE purpose = 'SELL' AND available = 'yes'", function(err, results) {
     
    if (err){throw err;}
     
@@ -1362,32 +1368,43 @@ function buyCars(username){
         choices: toDisplay
       }).then(function(answer) {
           var res = answer.cars.split(" ");
-          console.log("this is the vin, for the car you just bought" + res[0]);
           VINBought = res[1];
-           console.log("the vin is: " + VINBought);
-
-          //var sql = "DELETE FROM car WHERE VIN = '" + VINBought +"'";
-          //DHB100ZASFG
-          //"DELETE FROM car WHERE VIN = '" + VINBought +"'",
+          //"UPDATE car SET price = " + mysql.escape(answer.price) + "WHERE VIN = " + mysql.escape(VINBought),
           connection.query(
-            "Delete from car where VIN = " + mysql.escape(VINBought),
+            "UPDATE car SET available = 'no' WHERE VIN = " + mysql.escape(VINBought),
             function(err) {
               if (err) throw err;
               //if no err, will go back to login, now the employee should hit the returning employee. 
               console.log("Thanks for buying the car, it is now off of our lot");
               // re-prompt the user for if they want to bid or post
-              CustomerMain(username);
-            });
-    });    
+            
+          var state = "sold"
+         connection.query(
+          "INSERT INTO car_relation SET ?",
+          {
+            cu_username: username,
+            car_VIN: VINBought,
+            state: state
+          },
+          function(err) {
+            if (err) throw err;
+            
+            //if no err, will go back to login, now the employee should hit the returning employee. 
+            console.log("Your car was inserted into relation correctly!");
+            // re-prompt the user for if they want to bid or post
+            CustomerMain(username);          
+          });
+        });
+      });    
   }); 
 }
   
 function rentCars(username){
-  var header = "Make Model Year VIN address" + '\n' + "";
+   var header = "Price VIN Make Model Year Location" + '\n' + "";
   var toDisplay = [];
-  var VINRent = "";
+  var VINBought = "";
   
-  connection.query("SELECT * FROM car WHERE purpose = 'both' OR purpose = 'rent'", function(err, results) {
+  connection.query("SELECT * FROM car WHERE purpose = 'RENT' AND available = 'yes'", function(err, results) {
     
    if (err){throw err;}
     
@@ -1411,20 +1428,35 @@ function rentCars(username){
         choices: toDisplay
       }).then(function(answer) {
           var res = answer.cars.split(" ");
-          console.log("this is the vin, for the car you just rented" + res[0]);
-          VINRent = res[1];
-           console.log("the vin is: " + VINRent);
+          VINBought = res[1];
+          //"UPDATE car SET price = " + mysql.escape(answer.price) + "WHERE VIN = " + mysql.escape(VINBought),
           connection.query(
-            "Delete from car where VIN = " + mysql.escape(VINRent),
+            "UPDATE car SET available = 'no' WHERE VIN = " + mysql.escape(VINBought),
             function(err) {
               if (err) throw err;
               //if no err, will go back to login, now the employee should hit the returning employee. 
-              console.log("Thanks for buying the car, it is now off of our lot");
+              console.log("Thanks for renting the car, it is now off of our lot");
               // re-prompt the user for if they want to bid or post
-              CustomerMain(username);
-            });
-    });    
-  }); 
+            
+          var state = "rentOut"
+         connection.query(
+          "INSERT INTO car_relation SET ?",
+          {
+            cu_username: username,
+            car_VIN: VINBought,
+            state: state
+          },
+          function(err) {
+            if (err) throw err;
+            
+            //if no err, will go back to login, now the employee should hit the returning employee. 
+            console.log("Your car was inserted into relation correctly!");
+            // re-prompt the user for if they want to bid or post
+            CustomerMain(username);          
+          });
+        });
+      });    
+  });
 }
   
 

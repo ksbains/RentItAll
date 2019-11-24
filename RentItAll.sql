@@ -44,6 +44,7 @@ CREATE TABLE manager(
     on delete cascade on update cascade
 );
 
+
 CREATE TABLE car(
   VIN VARCHAR(100) NOT NULL,
   loc_address VARCHAR(100) NOT NULL,
@@ -59,11 +60,23 @@ CREATE TABLE car(
   mileage integer NOT NULL,
   conditions VARCHAR(45) NOT NULL,
   year integer NOT NULL,
+  available varchar(10) NOT null,
   PRIMARY KEY (VIN),
   FOREIGN KEY (loc_address) REFERENCES company_locations(address)
     on update cascade,
   FOREIGN KEY (ma_ssn) REFERENCES manager(mgr_ssn)
     on delete set null on update cascade
+);
+
+CREATE TABLE car_relation(
+  cu_username VARCHAR(100) NOT null,
+  car_VIN VARCHAR(100) NOT NULL,
+  state VARCHAR(10),
+  PRIMARY KEY(cu_username, car_VIN),
+  FOREIGN KEY(cu_username) REFERENCES customer(username)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY(car_VIN) REFERENCES car(VIN)
+    ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE rent_out(  
@@ -146,12 +159,8 @@ CREATE TABLE review(
 CREATE TABLE maintenance_service(
   name VARCHAR(100) NOT NULL,
   price INT NOT NULL,
-  me_ssn char(9),
-  PRIMARY KEY (name),
-  FOREIGN KEY (me_ssn) REFERENCES mechanic(m_ssn)
-    on delete set null on update cascade
+  PRIMARY KEY (name)
 );
-
 CREATE TABLE service_instance(
   cu_username VARCHAR(100) NOT NULL,
   b_id integer NOT NULL,
@@ -177,8 +186,6 @@ CREATE TABLE instance_of(
   FOREIGN KEY (srv_name) REFERENCES maintenance_service(name)
     on delete cascade on update cascade
 );
-
-
 CREATE TABLE service_offer(
   loc_address VARCHAR(100) NOT NULL,
   srv_name VARCHAR(100) NOT NULL,
@@ -241,46 +248,46 @@ VALUES  ('138'),
 
 INSERT INTO car
 VALUES  ('DHB100ZASFG','123 Washington Sq', NULL, 0, 'RENT', 'GAS',
-          'HONDA', 'ACCORD', 'GREEN','CVT-10','10000','500000','USED','2019'),
+          'HONDA', 'ACCORD', 'GREEN','CVT-10','10000','500000','USED','2019', "yes"),
         
         ('EF3456ZDSF4','123 Washington Sq', NULL, 0, 'RENT', 'GAS',
-          'HONDA', 'CIVIC', 'PINK','CVT-10','19000','500000','USED','2001'),
+          'HONDA', 'CIVIC', 'PINK','CVT-10','19000','500000','USED','2001', "yes"),
         
         ('CDE45SZQSJK','123 Washington Sq', NULL, 0, 'RENT', 'GAS',
-          'HONDA', 'CIVIC', 'RED','CVT-10','18000','500000','USED','2010'),
+          'HONDA', 'CIVIC', 'RED','CVT-10','18000','500000','USED','2010', "yes"),
         
         ('FF3586DDBNM','123 Redwood Dr', NULL, 0, 'RENT', 'GAS',
-          'TOYOTA', 'CAMRY', 'BLUE','CVT-10','15000','500000','USED','2003'),
+          'TOYOTA', 'CAMRY', 'BLUE','CVT-10','15000','500000','USED','2003', "yes"),
         
         ('NMEFGJGKRWP','123 Washington Sq', NULL, 0, 'RENT', 'GAS',
-          'NISSIAN', 'SENTRA', 'BLACK','AUTOMATIC','12000','500000','USED','2012'),
+          'NISSIAN', 'SENTRA', 'BLACK','AUTOMATIC','13000','500000','USED','2012', "yes"),
         
         ('IMYRN6G4RW5','123 Redwood Dr', NULL, 0, 'BOTH', 'GAS',
-          'NISSIAN', 'SENTRA', 'YELLOW','AUTOMATIC','15000','500000','USED','2013'),
+          'NISSIAN', 'SENTRA', 'YELLOW','AUTOMATIC','15000','500000','USED','2013', "yes"),
         
         ('WRTGV335DWK','123 Washington Sq', NULL, 0, 'BOTH', 'GAS',
-          'MAZDA', 'RX7', 'BLACK','MANUAL','55000','500000','USED','1993'),
+          'MAZDA', 'RX7', 'BLACK','MANUAL','55000','500000','USED','2000', "yes"),
         
         ('W3T5VBJ6FWS','123 Irvington St', NULL, 0, 'BOTH', 'GAS',
-          'MAZDA', 'RX7', 'WHITE','MANUAL','65000','500000','USED','1993'),
+          'MAZDA', 'RX7', 'WHITE','MANUAL','65000','500000','USED','2000', "yes"),
         
         ('3FGDJKL6IPX','123 Irvington St', NULL, 0, 'BOTH', 'GAS',
-          'FORD', 'MUSTANG', 'BLACK','MANUAL','70000','500000','USED','2020'),
+          'FORD', 'MUSTANG', 'BLACK','MANUAL','70000','500000','USED','2003', "yes"),
         
         ('8DNJHSI7JDQ','123 Irvington St', NULL, 0, 'BOTH', 'GAS',
-          'MAZDA', 'MX5', 'BLACK','MANUAL','30000','500000','USED','2020'),
+          'MAZDA', 'MX5', 'BLACK','MANUAL','30000','500000','USED','2004', "yes"),
         
         ('2DBJDAIBCZX','123 Redwood Dr', NULL, 0, 'SELL', 'GAS',
-          'TOYOTA', 'SUPRA', 'BLACK','MANUAL','80000','500000','USED','2019'),
+          'TOYOTA', 'SUPRA', 'BLACK','MANUAL','80000','500000','USED','2019', "yes"),
         
         ('6SF53AA3C8B','123 Irvington St', NULL, 0, 'SELL', 'GAS',
-          'SUBARU', 'BRZ', 'BLACK','MANUAL','30000','500000','USED','2017'),
+          'SUBARU', 'BRZ', 'BLACK','MANUAL','30000','500000','USED','2017', "yes"),
         
         ('S3GHKJDF789','123 Irvington St', NULL, 0, 'SELL', 'GAS',
-          'SUBARU', 'BRZ', 'GREY','MANUAL','30000','500000','USED','2013'),
+          'SUBARU', 'BRZ', 'GREY','MANUAL','30000','500000','USED','2013', "yes"),
         
         ('729JSDHB42F','123 Irvington St', NULL, 0, 'SELL', 'GAS',
-          'TOYOTA', 'FRS', 'BLACK','MANUAL','50000','500000','USED','2011'),
+          'TOYOTA', 'FRS', 'BLACK','MANUAL','50000','500000','USED','2011', "yes"),
         
         ('23DSFSDG5SD','123 Irvington St', NULL, 0, 'SELL', 'GAS',
-          'NISSIAN', 'VERSA', 'BLUE','AUTOMATIC','20000','500000','USED','2008');
+          'NISSIAN', 'VERSA', 'BLUE','AUTOMATIC','21000','500000','USED','2008', "yes");

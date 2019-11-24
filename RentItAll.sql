@@ -113,21 +113,25 @@ CREATE TABLE sell(
 CREATE TABLE mechanic(
   m_ssn char(9) NOT NULL,
   ma_ssn char(9),
+  loc_address VARCHAR(100) NOT NULL,
   PRIMARY KEY (m_ssn),
   FOREIGN KEY (ma_ssn) REFERENCES manager(mgr_ssn)
     on delete set null on update cascade,
   FOREIGN KEY (m_ssn) REFERENCES employee(SSN)
-    on delete cascade on update cascade
+    on delete cascade on update cascade,
+  FOREIGN KEY (loc_address) REFERENCES company_locations(address)
 );
 
 CREATE TABLE receptionist(
   r_ssn char(9) NOT NULL,
   ma_ssn char(9),
+  loc_address VARCHAR(100) NOT NULL,
   PRIMARY KEY (r_ssn),
   FOREIGN KEY (ma_ssn) REFERENCES manager(mgr_ssn)
     on delete set null on update cascade,
   FOREIGN KEY (r_ssn) REFERENCES employee(SSN)
-    on delete cascade on update cascade
+    on delete cascade on update cascade,
+  FOREIGN KEY (loc_address) REFERENCES company_locations(address)
 );
 
 CREATE TABLE review(
@@ -146,48 +150,30 @@ CREATE TABLE review(
 CREATE TABLE maintenance_service(
   name VARCHAR(100) NOT NULL,
   price INT NOT NULL,
-  me_ssn char(9),
-  PRIMARY KEY (name),
-  FOREIGN KEY (me_ssn) REFERENCES mechanic(m_ssn)
+  srv_name VARCHAR(100) NOT NULL,
+  loc_address VARCHAR(100) NOT NULL,
+  PRIMARY KEY (name, loc_address),
+  FOREIGN KEY (loc_address) REFERENCES company_locations(address)
     on delete set null on update cascade
 );
 
 CREATE TABLE service_instance(
+  b_id INT AUTO_INCREMENT PRIMARY KEY,
   cu_username VARCHAR(100) NOT NULL,
-  b_id integer NOT NULL,
   price INT NOT NULL,
   time_book integer NOT NULL,
   car_VIN VARCHAR(100),
   me_ssn char(9),
-  PRIMARY KEY (cu_username, b_id),
+  srv_name VARCHAR(100) NOT NULL,
   FOREIGN KEY (cu_username) REFERENCES customer(username)
     on delete cascade on update cascade,
   FOREIGN KEY (me_ssn) REFERENCES mechanic(m_ssn)
     on delete set null on update cascade,
   FOREIGN KEY (car_VIN) REFERENCES car(VIN)
-    on delete set null on update cascade
-);
-CREATE TABLE instance_of(
-  cu_username varchar(100) NOT NULL,
-  b_id integer NOT NULL,
-  srv_name varchar(100) NOT NULL,
-  PRIMARY KEY(cu_username, b_id, srv_name),
-  FOREIGN KEY (cu_username, b_id) REFERENCES service_instance(cu_username, b_id)
-    on delete cascade on update cascade,
-  FOREIGN KEY (srv_name) REFERENCES maintenance_service(name)
-    on delete cascade on update cascade
+    on delete set null on update cascade,
+  FOREIGN KEY (srv_name) REFERENCES maintenance_service(srv_name)
 );
 
-
-CREATE TABLE service_offer(
-  loc_address VARCHAR(100) NOT NULL,
-  srv_name VARCHAR(100) NOT NULL,
-  PRIMARY KEY(loc_address, srv_name),
-  FOREIGN KEY (loc_address) REFERENCES company_locations(address)
-    on delete cascade on update cascade,
-  FOREIGN KEY (srv_name) REFERENCES maintenance_service(name)
-    on delete cascade on update cascade
-);
 
 CREATE TABLE assist(
   cu_username varchar(100) NOT NULL,

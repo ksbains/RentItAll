@@ -8,7 +8,8 @@ var connection = mysql.createConnection({
   user: "root",
   // Your password
   password: "",
-  database: "RentItAll_DB"
+  database: "RentItAll_DB",
+  multipleStatements: true
 });
 // connect to the mysql server and sql database
 connection.connect(function(err) {
@@ -1008,40 +1009,52 @@ inquirer
       });  
 }
 
-function customerMaintenanceSchedule(){
+function customerMaintenanceSchedule(username){
 var locations = [];
+var mechanics = [];
+var services = [];
+var prices = [];
+
   connection.query("SELECT address FROM company_locations", function(err, results) {
    if (err){
      throw err;
    }
     for (var i = 0; i < results.length; i++) {      
       locations.push(results[i].address);
-    }     
-   });
 
-   var mechanics = [];
-  connection.query("SELECT * FROM mechanic", function(err, results) {
-   if (err){
-     throw err;
-   }
-    for (var i = 0; i < results.length; i++) {      
-      mechanics.push(results[i].m_ssn);
     }     
-   });  
+  });
+    
+    connection.query("SELECT * FROM mechanic", function(err, mecresults) {
+     if (err){
+       throw err;
+     }
+      for (var i = 0; i < mecresults.length; i++) {      
+        mechanics.push(mecresults[i].m_ssn);
+      }     
+    });
+  
+    connection.query("SELECT * FROM maintenance_service", function(err, mainresults) {
+     if (err){
+       throw err;
+     }
+      for (var i = 0; i < mainresults.length; i++) {      
+        services.push(mainresults[i].name);
+        prices.push(mainresults[i].price);
+      }
+      for (var i = 0; i < 10000000; i++) {
+        i = i+ 1;
+      }
+      customerMaintenanceServiceCallback(username, locations, mechanics, services, prices)     
+    });
+     
+}
 
-  var services = [];
-  var prices = [];
-  connection.query("SELECT * FROM maintenance_service", function(err, results) {
-   if (err){
-     throw err;
-   }
-    for (var i = 0; i < results.length; i++) {      
-      services.push(results[i].name);
-      prices.push(results[i].price);
-    }     
-   });  
+function customerMaintenanceServiceCallback(username, locations, mechanics, services, prices){
+  console.log("here is the locations before promt");
+  console.log(locations);
   inquirer
-      .prompt({
+      .prompt([{
         name: "location",
         type: "list",
         message: "What location would you like to pick up and drop off your car?",
@@ -1064,7 +1077,7 @@ var locations = [];
         name: "date",
         type: "input",
         message: "please enter date in format:MMDDYYYY 01012020"
-      })
+      }])
       .then(function(answer) {
         var idx = 0;
         for(var i= 0; i< services.length; i++){
@@ -1089,11 +1102,11 @@ var locations = [];
             //if no err, will go back to login, now the employee should hit the returning employee. 
             console.log("Your car was inserted in to the work queue!");
             // re-prompt the user for if they want to bid or post
-          })
+            
+          });
+        customerMaintenance(username);
       });
-      customerMaintenance(username);
-}
-
+    }
 function customerReview(username){
   var locations = [];
   connection.query("SELECT address FROM company_locations", function(err, results) {

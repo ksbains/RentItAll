@@ -202,29 +202,74 @@ INSERT INTO customer
 VALUES  ('testuser1', '123', 'tester1', '012013012', '123 Virginia St'),
         ('testuser2', '345', 'tester2', '012013123', '124 Virginia St'),
         ('testuser3', '678', 'tester3', '012013345', '125 Virginia St'),
-        ('testuser4', '912', 'tester4', '012013234', '126 Virginia St');
+        ('testuser4', '912', 'tester4', '012013234', '126 Virginia St'),
+        ('testuser5', '949', 'tester5', '012013233', '132 Irvington St'),
+        ('testuser6', '962', 'tester6', '012013232', '133 Irvington St'),
+        ('testuser7', '989', 'tester7', '012013231', '134 Irvington St');
 
 INSERT INTO customer_type
 VALUES  ('testuser1', 'buyer'),
         ('testuser1', 'renter'),
         ('testuser2', 'seller'),
         ('testuser3', 'host'),
-        ('testuser4', 'renter');
+        ('testuser4', 'renter'),
+        ('testuser4', 'buyer'),
+        ('testuser5', 'renter'),
+        ('testuser6', 'seller'),
+        ('testuser7', 'host');
 
 INSERT INTO company_locations
 VALUES  ('123 Washington Sq', '100', '1234567894'),
-        ('123 Irvington St', '50', '1234567498');
+        ('123 Irvington St', '50', '1234567498'),
+        ('123 Redwood Dr', '35', '1234567468');
 
 INSERT INTO employee
-VALUES  ('123456789', 'mgr1', '123 Washington Sq', '200000'),
+VALUES  ('138', 'mgr0', '123 Washington Sq', '99999999'),
+        ('123456789', 'mgr1', '123 Washington Sq', '200000'),
         ('123456788', 'mch1', '123 Washington Sq', '100000'),
-        ('123456787', 'rep1', '123 Washington Sq', '100000'),
-        ('123456786', 'mgr2', '123 Irvington St', '200000');
+        ('123456787', 'rep1', '123 Redwood Dr', '100000'),
+        ('123456786', 'rep2', '123 Irvington St', '100000'),
+        ('123456785', 'mgr2', '123 Irvington St', '200000');
 
 INSERT INTO manager
 VALUES  ('138'),  
-        ('123456786');
+        ('123456779'),
+        ('123456778'),
+        ('123456776'),
+        ('123456775'),
+        ('123456774'),
+        ('123456773');
 
 INSERT INTO car
 VALUES  ('DHB100ZASFG','123 Washington Sq', NULL, 0, 'RENT', 'GAS',
-          'HONDA', 'ACCORD', 'GREEN','CVT-10','10000','USED','2019');
+          'HONDA', 'ACCORD', 'GREEN','CVT-10','10000','USED','2019'),
+        ('EF3456ZDSF4','123 Washington Sq', NULL, 0, 'RENT', 'GAS',
+          'HONDA', 'CIVIC', 'PINK','CVT-10','19000','USED','2001'),
+        ('CDE45SZQSJK','123 Washington Sq', NULL, 0, 'RENT', 'GAS',
+          'HONDA', 'CIVIC', 'RED','CVT-10','18000','USED','2010'),
+        ('FF3586DDBNM','123 Redwood Dr', NULL, 0, 'RENT', 'GAS',
+          'TOYOTA', 'CAMRY', 'BLUE','CVT-10','15000','USED','2003'),
+        ('NMHF7JZKWQP','123 Washington Sq', NULL, 0, 'RENT', 'GAS',
+          'NISSIAN', 'ALTIMA', 'BLACK','CVT-10','20000','USED','2011'),
+        ('NMEFGJGKRWP','123 Washington Sq', NULL, 0, 'RENT', 'GAS',
+          'NISSIAN', 'SENTRA', 'BLACK','AUTOMATIC','12000','USED','2012'),
+        ('IMYRN6G4RW5','123 Redwood Dr', NULL, 0, 'BUY', 'GAS',
+          'NISSIAN', 'SENTRA', 'YELLOW','AUTOMATIC','15000','USED','2013'),
+        ('WRTGV335DWK','123 Washington Sq', NULL, 0, 'BUY', 'GAS',
+          'MAZDA', 'RX7', 'BLACK','MANUAL','55000','USED','1993'),
+        ('W3T5VBJ6FWS','123 Irvington St', NULL, 0, 'BUY', 'GAS',
+          'MAZDA', 'RX7', 'WHITE','MANUAL','65000','USED','1993'),
+        ('3FGDJKL6IPX','123 Irvington St', NULL, 0, 'BUY', 'GAS',
+          'FORD', 'MUSTANG', 'BLACK','MANUAL','70000','USED','2020'),
+        ('8DNJHSI7JDQ','123 Irvington St', NULL, 0, 'BUY', 'GAS',
+          'MAZDA', 'MX5', 'BLACK','MANUAL','30000','USED','2020'),
+        ('2DBJDAIBCZX','123 Redwood Dr', NULL, 0, 'SELL', 'GAS',
+          'TOYOTA', 'SUPRA', 'BLACK','MANUAL','80000','USED','2019'),
+        ('6SF53AA3C8B','123 Irvington St', NULL, 0, 'SELL', 'GAS',
+          'SUBARU', 'BRZ', 'BLACK','MANUAL','30000','USED','2017'),
+        ('S3GHKJDF789','123 Irvington St', NULL, 0, 'SELL', 'GAS',
+          'SUBARU', 'BRZ', 'GREY','MANUAL','30000','USED','2013'),
+        ('729JSDHB42F','123 Irvington St', NULL, 0, 'SELL', 'GAS',
+          'TOYOTA', 'FRS', 'BLACK','MANUAL','50000','USED','2011'),
+        ('23DSFSDG5SD','123 Irvington St', NULL, 0, 'SELL', 'GAS',
+          'NISSIAN', 'VERSA', 'BLUE','AUTOMATIC','20000','USED','2008');

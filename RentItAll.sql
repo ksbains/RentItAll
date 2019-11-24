@@ -150,28 +150,10 @@ CREATE TABLE review(
 CREATE TABLE maintenance_service(
   name VARCHAR(100) NOT NULL,
   price INT NOT NULL,
-  srv_name VARCHAR(100) NOT NULL,
   loc_address VARCHAR(100) NOT NULL,
   PRIMARY KEY (name, loc_address),
   FOREIGN KEY (loc_address) REFERENCES company_locations(address)
-    on delete set null on update cascade
-);
-
-CREATE TABLE service_instance(
-  b_id INT AUTO_INCREMENT PRIMARY KEY,
-  cu_username VARCHAR(100) NOT NULL,
-  price INT NOT NULL,
-  time_book integer NOT NULL,
-  car_VIN VARCHAR(100),
-  me_ssn char(9),
-  srv_name VARCHAR(100) NOT NULL,
-  FOREIGN KEY (cu_username) REFERENCES customer(username)
-    on delete cascade on update cascade,
-  FOREIGN KEY (me_ssn) REFERENCES mechanic(m_ssn)
-    on delete set null on update cascade,
-  FOREIGN KEY (car_VIN) REFERENCES car(VIN)
-    on delete set null on update cascade,
-  FOREIGN KEY (srv_name) REFERENCES maintenance_service(srv_name)
+    on delete cascade on update cascade
 );
 
 
@@ -185,6 +167,23 @@ CREATE TABLE assist(
     on delete cascade on update cascade
 );
 
+CREATE TABLE service_instance(
+  b_id INT AUTO_INCREMENT PRIMARY KEY,
+  cu_username VARCHAR(100) NOT NULL,
+  price INT NOT NULL,
+  time_book integer NOT NULL,
+  car_VIN VARCHAR(100),
+  me_ssn char(9),
+  sr_name VARCHAR(100) NOT NULL,
+  FOREIGN KEY (cu_username) REFERENCES customer(username)
+    on delete cascade on update cascade,
+  FOREIGN KEY (me_ssn) REFERENCES mechanic(m_ssn)
+    on delete set null on update cascade,
+  FOREIGN KEY (car_VIN) REFERENCES car(VIN)
+    on delete set null on update cascade,
+  FOREIGN KEY (sr_name) REFERENCES maintenance_service(name)
+  on delete cascade on update cascade
+);
 INSERT INTO customer
 VALUES  ('testuser1', '123', 'tester1', '012013012', '123 Virginia St'),
         ('testuser2', '345', 'tester2', '012013123', '124 Virginia St'),

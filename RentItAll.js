@@ -973,10 +973,10 @@ inquirer
       })
       .then(function(answer) {
         if (answer.maintenanceMenu == "Schedule") {
-         customerMaintenanceSchedule();
+         customerMaintenanceSchedule(username);
         } else if(answer.maintenanceMenu == "Check Current") {
           //sql for cars under the customer          
-          connection.query("SELECT * FROM service_instance", function(err, results) {
+          connection.query("SELECT * FROM service_instance WHERE  cu_username = " + mysql.escape(username), function(err, results) {
              if (err){
                throw err;
              }
@@ -1009,67 +1009,89 @@ inquirer
 }
 
 function customerMaintenanceSchedule(){
-  var meSSNs = [];
-  connection.query("SELECT m_ssn FROM mechanic", function(err, results) {
+var locations = [];
+  connection.query("SELECT address FROM company_locations", function(err, results) {
    if (err){
      throw err;
    }
     for (var i = 0; i < results.length; i++) {      
-      meSSNs.push(results[i].m_ssn);
+      locations.push(results[i].address);
     }     
    });
+
+   var mechanics = [];
+  connection.query("SELECT * FROM mechanic", function(err, results) {
+   if (err){
+     throw err;
+   }
+    for (var i = 0; i < results.length; i++) {      
+      mechanics.push(results[i].m_ssn);
+    }     
+   });  
+
+  var services = [];
+  var prices = [];
+  connection.query("SELECT * FROM maintenance_service", function(err, results) {
+   if (err){
+     throw err;
+   }
+    for (var i = 0; i < results.length; i++) {      
+      services.push(results[i].name);
+      prices.push(results[i].price);
+    }     
+   });  
   inquirer
       .prompt({
-        name: "maintenanceMenu",
+        name: "location",
         type: "list",
-        message: "What Service would you like",
-        choices: ["Oil Change","Tire Roatation", "Brake", "Return"]
+        message: "What location would you like to pick up and drop off your car?",
+        choices: locations
       },{
         name: "mechanic",
         type: "list",
-        message: "Choose a mechanic",
-        choices: meSSNs
+        message: "Which Mechanic would you like to work on your car??",
+        choices: mechanics
+      },{
+        name: "service",
+        type: "list",
+        message: "What Service would you like",
+        choices: services
       },{
         name: "VIN",
         type: "input",
-        message: "VIN:"
+        message: "what is you car VIN:"
       }, {
         name: "date",
         type: "input",
         message: "please enter date in format:MMDDYYYY 01012020"
       })
       .then(function(answer) {
-        var price = 0;
-        if (answer.maintenanceMenu == "Schedule") {
-         price = 50;
-        } else if(answer.maintenanceMenu == "Tire Roatation") {
-          
-          price = 20;
-        } else if(answer.maintenanceMenu == "Brake") {
-          
-          price = 200
-        } else if(answer.maintenanceMenu == "Return") {
-          CustomerMain();
-        } else{
-          
+        var idx = 0;
+        for(var i= 0; i< services.length; i++){
+          if(services[i] == answer.service){
+            idx = i;
+          }
         }
 
         connection.query(
-          "INSERT INTO maintenance_service SET ?",
+          "INSERT INTO service_instnace SET ?",
           {
-            name: answer.maintenanceMenu,
-            price: price,
-            me_ssn: answer.meSSN
+            cu_username: username, 
+            price: prices[i],
+            time_book: answer.date, 
+            car_VIN: answer.VIN,
+            me_ssn: answer.mechanic,
+            sr_name: answer.service
           },
           function(err) {
             if (err) throw err;
             
             //if no err, will go back to login, now the employee should hit the returning employee. 
-            console.log("Your car was inserted correctly!");
+            console.log("Your car was inserted in to the work queue!");
             // re-prompt the user for if they want to bid or post
-            managerMain();          
           })
       });
+      customerMaintenance(username);
 }
 
 function customerReview(username){

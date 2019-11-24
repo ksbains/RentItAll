@@ -417,7 +417,7 @@ function managerMain(ssn){
             ]).then(function(answer) {
               //do some salary logic
               var source = 1;
-              var purpose = "sell";
+              var purpose = "SELL";
 
 
               connection.query(
@@ -754,7 +754,7 @@ var locations = [];
 
       //do some salary logic
       var source = 0;
-      var purpose = "sell";
+      var purpose = "SELL";
       connection.query(
         "INSERT INTO car SET ?",
         {
@@ -779,6 +779,7 @@ var locations = [];
           //if no err, will go back to login, now the employee should hit the returning employee. 
           console.log("Your car was inserted correctly!");
           // re-prompt the user for if they want to bid or post
+          CustomerMain(username); 
         })
 
       // connection.query(
@@ -843,7 +844,7 @@ function customerRentOut(){
    });
   //var maSSN = "123456789";
   var source = 0;
-  var purpose = "rent"
+  var purpose = "RENT"
 
   inquirer
     .prompt([
@@ -944,21 +945,21 @@ function customerRentOut(){
           //if no err, will go back to login, now the employee should hit the returning employee. 
           console.log("Your car was inserted correctly!");
           // re-prompt the user for if they want to bid or post
-          CustomerMain();          
+          CustomerMain(username);          
         });
-        connection.query(
-          "INSERT INTO sell SET ?",
-          {
-            cu_username: username,
-            price: answer.price,
-            car_VIN: answer.VIN
+        // connection.query(
+        //   "INSERT INTO sell SET ?",
+        //   {
+        //     cu_username: username,
+        //     price: answer.price,
+        //     car_VIN: answer.VIN
             
-          },
-          function(err) {
-            if (err) throw err;
+        //   },
+        //   function(err) {
+        //     if (err) throw err;
               
-              CustomerMain();          
-           });
+        //       CustomerMain();          
+        //    });
       });
   }
 

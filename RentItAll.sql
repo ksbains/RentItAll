@@ -49,13 +49,13 @@ CREATE TABLE car(
   loc_address VARCHAR(100) NOT NULL,
   ma_ssn char(9),                    
   source bit not null,
-  price VARCHAR(10) not null,
   purpose varchar(10) not null,
   type VARCHAR(45) NOT NULL,
   make VARCHAR(45) NOT NULL,
   model VARCHAR(45) NOT NULL,
   paint VARCHAR(45) NOT NULL,
   transmission VARCHAR(45) NOT NULL,
+  price VARCHAR(10) not null,
   mileage integer NOT NULL,
   conditions VARCHAR(45) NOT NULL,
   year integer NOT NULL,
@@ -234,43 +234,53 @@ VALUES  ('138', 'mgr0', '123 Washington Sq', '99999999'),
 
 INSERT INTO manager
 VALUES  ('138'),  
-        ('123456779'),
-        ('123456778'),
-        ('123456776'),
-        ('123456775'),
-        ('123456774'),
-        ('123456773');
+        ('123456789'),
+        ('123456788'),
+        ('123456786'),
+        ('123456785');
 
 INSERT INTO car
 VALUES  ('DHB100ZASFG','123 Washington Sq', NULL, 0, 'RENT', 'GAS',
-          'HONDA', 'ACCORD', 'GREEN','CVT-10','10000','USED','2019'),
+          'HONDA', 'ACCORD', 'GREEN','CVT-10','10000','500000','USED','2019'),
+        
         ('EF3456ZDSF4','123 Washington Sq', NULL, 0, 'RENT', 'GAS',
-          'HONDA', 'CIVIC', 'PINK','CVT-10','19000','USED','2001'),
+          'HONDA', 'CIVIC', 'PINK','CVT-10','19000','500000','USED','2001'),
+        
         ('CDE45SZQSJK','123 Washington Sq', NULL, 0, 'RENT', 'GAS',
-          'HONDA', 'CIVIC', 'RED','CVT-10','18000','USED','2010'),
+          'HONDA', 'CIVIC', 'RED','CVT-10','18000','500000','USED','2010'),
+        
         ('FF3586DDBNM','123 Redwood Dr', NULL, 0, 'RENT', 'GAS',
-          'TOYOTA', 'CAMRY', 'BLUE','CVT-10','15000','USED','2003'),
-        ('NMHF7JZKWQP','123 Washington Sq', NULL, 0, 'RENT', 'GAS',
-          'NISSIAN', 'ALTIMA', 'BLACK','CVT-10','20000','USED','2011'),
+          'TOYOTA', 'CAMRY', 'BLUE','CVT-10','15000','500000','USED','2003'),
+        
         ('NMEFGJGKRWP','123 Washington Sq', NULL, 0, 'RENT', 'GAS',
-          'NISSIAN', 'SENTRA', 'BLACK','AUTOMATIC','12000','USED','2012'),
+          'NISSIAN', 'SENTRA', 'BLACK','AUTOMATIC','12000','500000','USED','2012'),
+        
         ('IMYRN6G4RW5','123 Redwood Dr', NULL, 0, 'BOTH', 'GAS',
-          'NISSIAN', 'SENTRA', 'YELLOW','AUTOMATIC','15000','USED','2013'),
+          'NISSIAN', 'SENTRA', 'YELLOW','AUTOMATIC','15000','500000','USED','2013'),
+        
         ('WRTGV335DWK','123 Washington Sq', NULL, 0, 'BOTH', 'GAS',
-          'MAZDA', 'RX7', 'BLACK','MANUAL','55000','USED','1993'),
+          'MAZDA', 'RX7', 'BLACK','MANUAL','55000','500000','USED','1993'),
+        
         ('W3T5VBJ6FWS','123 Irvington St', NULL, 0, 'BOTH', 'GAS',
-          'MAZDA', 'RX7', 'WHITE','MANUAL','65000','USED','1993'),
+          'MAZDA', 'RX7', 'WHITE','MANUAL','65000','500000','USED','1993'),
+        
         ('3FGDJKL6IPX','123 Irvington St', NULL, 0, 'BOTH', 'GAS',
-          'FORD', 'MUSTANG', 'BLACK','MANUAL','70000','USED','2020'),
+          'FORD', 'MUSTANG', 'BLACK','MANUAL','70000','500000','USED','2020'),
+        
         ('8DNJHSI7JDQ','123 Irvington St', NULL, 0, 'BOTH', 'GAS',
-          'MAZDA', 'MX5', 'BLACK','MANUAL','30000','USED','2020'),
+          'MAZDA', 'MX5', 'BLACK','MANUAL','30000','500000','USED','2020'),
+        
         ('2DBJDAIBCZX','123 Redwood Dr', NULL, 0, 'SELL', 'GAS',
-          'TOYOTA', 'SUPRA', 'BLACK','MANUAL','80000','USED','2019'),
+          'TOYOTA', 'SUPRA', 'BLACK','MANUAL','80000','500000','USED','2019'),
+        
         ('6SF53AA3C8B','123 Irvington St', NULL, 0, 'SELL', 'GAS',
-          'SUBARU', 'BRZ', 'BLACK','MANUAL','30000','USED','2017'),
+          'SUBARU', 'BRZ', 'BLACK','MANUAL','30000','500000','USED','2017'),
+        
         ('S3GHKJDF789','123 Irvington St', NULL, 0, 'SELL', 'GAS',
-          'SUBARU', 'BRZ', 'GREY','MANUAL','30000','USED','2013'),
+          'SUBARU', 'BRZ', 'GREY','MANUAL','30000','500000','USED','2013'),
+        
         ('729JSDHB42F','123 Irvington St', NULL, 0, 'SELL', 'GAS',
-          'TOYOTA', 'FRS', 'BLACK','MANUAL','50000','USED','2011'),
+          'TOYOTA', 'FRS', 'BLACK','MANUAL','50000','500000','USED','2011'),
+        
         ('23DSFSDG5SD','123 Irvington St', NULL, 0, 'SELL', 'GAS',
-          'NISSIAN', 'VERSA', 'BLUE','AUTOMATIC','20000','USED','2008');
+          'NISSIAN', 'VERSA', 'BLUE','AUTOMATIC','20000','500000','USED','2008');

@@ -354,7 +354,7 @@ function managerMain(ssn){
         name: "ManagerMenu",
         type: "list",
         message: "What would you like to do?",
-        choices: ["View Car", "Add Car", "Remove Car", "Modify Car"]
+        choices: ["View Car", "Add Car", "Remove Car", "Modify Car", "Logout"]
       })
       .then(function(answer) {
         if(answer.ManagerMenu == "View Car"){
@@ -464,6 +464,8 @@ function managerMain(ssn){
         } else if(answer.ManagerMenu == "Modify Car"){
           //modify car's price
           modifyCar(ssn);
+        } else if(answer.ManagerMenu == "Logout") {
+          managerLogout();
         } else{
           console.log("ooPS Should not be here at all!")
         }
@@ -1202,6 +1204,10 @@ function customerLogout(){
   start();  
 }
 
+function managerLogout(){
+  start();  
+}
+
 //Helper Methods
 function viewCars() {
   connection.query("SELECT * FROM car", function(err, results) {
@@ -1212,7 +1218,8 @@ function viewCars() {
     for (var i = 0; i < results.length; i++) {
      
        var toReturn = "";
-     
+
+       toReturn = toReturn + results[i].price + " ";
        toReturn = toReturn + results[i].make + " ";
        toReturn = toReturn + results[i].model + " ";
        toReturn = toReturn + results[i].year + " ";

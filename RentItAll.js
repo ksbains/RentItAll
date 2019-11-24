@@ -45,13 +45,16 @@ function Employee(){
         name: "userType",
         type: "list",
         message: "Are you a new or returning Employee",
-        choices: ["New Employee", "Returning Employee"]
+        choices: ["New Employee", "Returning Employee", "Return"]
       })
       .then(function(answer) {
         // based on their answer, either call the createEmployee or the signInEmployee  functions
         if (answer.userType.toUpperCase() === "NEW EMPLOYEE") {
           createEmployee();
         }
+        else if(answer.userType == "Return") {
+          start();
+        } 
         else {
           //This method will handle the employee flow
           Employeelogin();
@@ -106,12 +109,6 @@ function createEmployee(){
         type: "list",
         message: "What location are you at?",
         choices: locations
-      },
-      {
-        name: "manager",
-        type: "list",
-        message: "Who is your manager, please select Manager ID?",
-        choices: managersID
       }]).then(function(answer) {
       var salary = 0;
       if(answer.position == "Mechanic"){
@@ -120,7 +117,7 @@ function createEmployee(){
         salary = 45000;
       } else if(answer.position == "Manager"){
         salary = 95000;
-      }else{
+      } else{
         salary = -1;
       }
       connection.query(
@@ -520,13 +517,16 @@ function Customer() {
         name: "customerType",
         type: "list",
         message: "Are you a new or returning customer",
-        choices: ["New Customer", "Returning Customer"]
+        choices: ["New Customer", "Returning Customer", "Return"]
       })
       .then(function(answer) {
         // based on their answer, either call the createEmployee or the signInEmployee  functions
         if (answer.customerType.toUpperCase() === "NEW CUSTOMER") {
           createCustomer();
         }
+        else if(answer.customerType == "Return") {
+          start();
+        } 
         else {
           //This method will handle the employee flow
           CustomerLogin();

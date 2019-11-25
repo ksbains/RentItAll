@@ -366,8 +366,8 @@ function managerMain(ssn){
       .then(function(answer) {
         if(answer.ManagerMenu == "View Car"){
            // list the car table using connectino
-           viewCars();
-           managerMain(ssn)
+           viewCars(ssn);
+           
         } else if(answer.ManagerMenu == "Add Car"){
           //same logic as cusotmer adding car, except now fill in this ms_ssn
           locations = ["315 E San Fernando", "189 Curtner Ave", "167 E Taylor St"];
@@ -408,7 +408,11 @@ function managerMain(ssn){
                 type: "input",
                 message: "Transmission: "
               },
-
+              {
+                name: "price",
+                type: "input",
+                message: "Price: "
+              },
               {
                 name: "mileage",
                 type: "input",
@@ -428,7 +432,7 @@ function managerMain(ssn){
               //do some salary logic
               var source = 1;
               var purpose = "SELL";
-
+              var available = "yes";
 
               connection.query(
                 "INSERT INTO car SET ?",
@@ -445,8 +449,9 @@ function managerMain(ssn){
                   paint: answer.paint,
                   transmission: answer.transmission,
                   mileage: answer.mileage,
-                  conditions: answer.conditions
-
+                  conditions: answer.conditions,
+                  price: answer.price,
+                  available: available
                 },
                 function(err) {
                   if (err) throw err;
@@ -1305,7 +1310,7 @@ function customerLogout(){
 }  
 
 //Helper Methods
-function viewCars() {
+function viewCars(ssn) {
   connection.query("SELECT * FROM car", function(err, results) {
    if (err){throw err;}
    
@@ -1331,9 +1336,19 @@ function viewCars() {
      console.log(toDisplay[i]);
      console.log("---------------------------------------------------");
    }
- });
 
-  inquirer.prompt()
+  inquirer.prompt(
+      {
+        name: "return",
+        type: "list",
+        message: " ",
+        choices: ["Return"]
+      }).then(function(answer) {
+        if(answer.return == "Return"){
+          managerMain(ssn); return
+        }
+  }); 
+ });
 }
 
 function removeCar(ssn){

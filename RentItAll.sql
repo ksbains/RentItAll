@@ -159,7 +159,7 @@ CREATE TABLE review(
 CREATE TABLE service_instance(
   cu_username VARCHAR(100) NOT NULL,
   b_id integer NOT NULL,
-  price INT NOT NULL,
+  price INT AUTO_INCREMENT NOT NULL,
   time_book integer NOT NULL,
   car_VIN VARCHAR(100),
   me_ssn char(9),
@@ -223,14 +223,11 @@ VALUES  ('315 E San Fernando', 'Oil Change', '30'),
         ('189 Curtner Ave', 'Timing Belt Replacement', '200'),
         ('167 E Taylor St', 'Timing Belt Replacement', '200'),
         ('315 E San Fernando', 'Water Pump Replacement', '250'),
-        ('189 Curtner Ave', 'Water Pump Replacement', '250'),
+        ('189 Curtner Ave', 'Water Pump Replacement', '250'), 
         ('167 E Taylor St', 'Water Pump Replacement', '250'),
         ('315 E San Fernando', 'Engine Replacement', '5500'),
         ('189 Curtner Ave', 'Engine Replacement', '5500'),
-        ('167 E Taylor St', 'Engine Replacement', '5500'),
-        ('315 E San Fernando', 'Paint Job', '3500'),
-        ('189 Curtner Ave', 'Paint Job', '3500'),
-        ('167 E Taylor St', 'Paint Job', '3500');
+        ('167 E Taylor St', 'Engine Replacement', '5500');
 
 INSERT INTO customer
 VALUES  ('testuser1', '123', 'tester1', '012013012', '315 E San Fernando'),

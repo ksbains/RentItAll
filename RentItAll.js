@@ -992,8 +992,8 @@ inquirer
 
 function customerMaintenanceSchedule(username){
   locations = ["315 E San Fernando", "189 Curtner Av", "167 E Taylor St"];
-  services = [];
-  services.push
+  services = ["Oil Change", "Tire Rotation","Brake Change","Blinker Fluid","Wheel Alignment","Battery Replacement","Timing Belt Replacement","Water Pump Replacement","Engine Replacement"];
+  services.push("Return");
   meSSNs = [];
   connection.query(
     "SELECT * FROM mechanic", function(err, results) {
@@ -1032,26 +1032,38 @@ function customerMaintenanceSchedule(username){
       })
       .then(function(answer) {
         var price = 0;
-        if (answer.maintenanceMenu == "Schedule") {
-         price = 50;
-        } else if(answer.maintenanceMenu == "Tire Roatation") {
-          
-          price = 20;
-        } else if(answer.maintenanceMenu == "Brake") {
-          
+        if (answer.maintenanceMenu == "Oil Change") {
+         price = 30;
+        } else if(answer.maintenanceMenu == "Tire Rotation") {
+          price = 40;
+        } else if(answer.maintenanceMenu == "Brake Change") {
+          price = 60
+        } else if(answer.maintenanceMenu == "Blinker Fluid") {
+          price = 5
+        } else if(answer.maintenanceMenu == "Wheel Alignment") {
+          price = 80
+        } else if(answer.maintenanceMenu == "Battery Replacement") {
+          price = 50
+        } else if(answer.maintenanceMenu == "Timing Belt Replacement") {
           price = 200
+        } else if(answer.maintenanceMenu == "Water Pump Replacement") {
+          price = 250
+        } else if(answer.maintenanceMenu == "Engine Replacement") {
+          price = 5500
         } else if(answer.maintenanceMenu == "Return") {
           CustomerMain(username);
         } else{
-          
+          console.log("uh-oh errror");
         }
 
         connection.query(
           "INSERT INTO service_instance SET ?",
           {
-            name: answer.maintenanceMenu,
+            cu_username: username,
             price: price,
-            me_ssn: answer.meSSN
+            time_book: answer.date,
+            car_VIN: answer.VIN,
+            me_ssn: mechanic
           },
           function(err) {
             if (err) throw err;

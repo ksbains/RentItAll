@@ -156,11 +156,6 @@ CREATE TABLE review(
     on update cascade
 );
 
-CREATE TABLE maintenance_service(
-  name VARCHAR(100) NOT NULL,
-  price INT NOT NULL,
-  PRIMARY KEY (name)
-);
 CREATE TABLE service_instance(
   cu_username VARCHAR(100) NOT NULL,
   b_id integer NOT NULL,
@@ -189,11 +184,10 @@ CREATE TABLE instance_of(
 CREATE TABLE service_offer(
   loc_address VARCHAR(100) NOT NULL,
   srv_name VARCHAR(100) NOT NULL,
+  price INT NOT NULL,
   PRIMARY KEY(loc_address, srv_name),
   FOREIGN KEY (loc_address) REFERENCES company_locations(address)
     on delete cascade on update cascade,
-  FOREIGN KEY (srv_name) REFERENCES maintenance_service(name)
-    on delete cascade on update cascade
 );
 
 CREATE TABLE assist(

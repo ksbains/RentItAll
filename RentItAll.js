@@ -956,7 +956,7 @@ inquirer
       })
       .then(function(answer) {
         if (answer.maintenanceMenu == "Schedule") {
-         customerMaintenanceSchedule();
+         customerMaintenanceSchedule(username);
         } else if(answer.maintenanceMenu == "Check Current") {
           //sql for cars under the customer          
           connection.query("SELECT * FROM service_instance", function(err, results) {
@@ -992,15 +992,8 @@ inquirer
 }
 
 function customerMaintenanceSchedule(username){
-  var meSSNs = [];
-  connection.query("SELECT m_ssn FROM mechanic", function(err, results) {
-   if (err){
-     throw err;
-   }
-    for (var i = 0; i < results.length; i++) {      
-      meSSNs.push(results[i].m_ssn);
-    }     
-   });
+  locations = ["315 E San Fernando", "189 Curtner Av", "167 E Taylor St"];
+
   inquirer
       .prompt({
         name: "maintenanceMenu",
@@ -1008,6 +1001,12 @@ function customerMaintenanceSchedule(username){
         message: "What Service would you like",
         choices: ["Oil Change","Tire Roatation", "Brake", "Return"]
       },{
+        name: "location",
+        type: "list",
+        message: "Which locations would you like?",
+        choices: locations
+      },
+      {
         name: "mechanic",
         type: "list",
         message: "Choose a mechanic",

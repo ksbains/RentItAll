@@ -17,7 +17,8 @@ connection.connect(function(err) {
   start();
 });
 
-var b_id = 0;
+
+global.b_id = 0;
 
 
 
@@ -619,22 +620,22 @@ function CustomerMain(username) {
         name: "menu",
         type: "list",
         message: "What would you like to do?",
-        choices: ["buy" , "sell", "rent" ,"rentout", "maintenance" , "review", "logout"]
+        choices: ["Buy" , "Sell", "Rent" ,"Rentout", "Maintainence" , "Review", "Logout"]
       })
       .then(function(answer) {
-        if (answer.menu == "buy") {
+        if (answer.menu == "Buy") {
           customerBuy(username);  
-        } else if (answer.menu == "sell") {
+        } else if (answer.menu == "Sell") {
           customerSell(username);  
-        } else if (answer.menu == "rent") {
+        } else if (answer.menu == "Rent") {
           customerRent(username);  
-        } else if (answer.menu == "rentout") {
+        } else if (answer.menu == "Rentout") {
           customerRentOut(username);  
-        } else if (answer.menu == "maintenance") {
+        } else if (answer.menu == "Maintainence") {
           customerMaintenance(username);
-        } else if (answer.menu == "review") {
+        } else if (answer.menu == "Review") {
           customerReview(username);  
-        } else if (answer.menu == "logout") {
+        } else if (answer.menu == "Logout") {
           customerLogout();  
         }
       });  
@@ -962,6 +963,18 @@ inquirer
         if (answer.maintenanceMenu == "Schedule") {
          customerMaintenanceSchedule(username);
         } else if(answer.maintenanceMenu == "Check Current") {
+           inquirer
+              .prompt(
+              {
+                name: "return",
+                type: "list",
+                message: "Return",
+                choices: ["Return"]
+              }).then(function(answer) {
+                if(answer.return == "Return"){
+                  customerMaintenance(username)
+                }
+          });
           //sql for cars under the customer          
           connection.query("SELECT * FROM service_instance WHERE cu_username = " + mysql.escape(username), function(err, results) {
              if (err){
@@ -969,7 +982,7 @@ inquirer
              }
              var toDisplay = [];
              var header = "Customer Username  bID  Price  timeBook  carVin  mechanic" + '\n' + "";
-            for (var i = 0; i < reviews.length; i++) {
+            for (var i = 0; i < results.length; i++) {
               
               var toReturn = "";
               toReturn = toReturn + results[i].cu_username + " ";
@@ -980,12 +993,13 @@ inquirer
               toReturn = toReturn + results[i].me_ssn + " ";
               toDisplay.push(toReturn);
             }
-            toDisplay.upshift(header);
+            toDisplay.unshift(header);
             for(var i = 0; i<toDisplay.length; i++){
                console.log(toDisplay[i]);
                console.log("---------------------------------------------------");
              }     
           });
+
 
         } else if(answer.maintenanceMenu == "Return") {
           CustomerMain(username);
@@ -998,13 +1012,17 @@ inquirer
 function customerMaintenanceSchedule(username){
   locations = ["315 E San Fernando", "189 Curtner Av", "167 E Taylor St"];
   services = ["Oil Change", "Tire Rotation","Brake Change","Blinker Fluid","Wheel Alignment","Battery Replacement","Timing Belt Replacement","Water Pump Replacement","Engine Replacement"];
-  services.push("Return");
   cars = [];
-  connection.query("SELECT car_VIN FROM car_relation WHERE cu_username = " + mysql.escape(username), function(err, results){
+
+  //SELECT car_VIN FROM car_relation WHERE  NOT EXISTS (SELECT * from service_instance WHERE cu_username = 'k');
+  var SQL = "SELECT car_VIN FROM car_relation WHERE NOT EXISTS (SELECT * from service_instance WHERE cu_username = "+ mysql.escape(username)+ " )";
+  SQL = "SELECT car_VIN FROM car_relation WHERE cu_username = "+ mysql.escape(username);
+  connection.query(SQL, function(err, results){
     for(var i =0; i< results.length; i++){
       cars.push(results[i].car_VIN);
     }
   });
+
   inquirer
       .prompt([{
         name: "maintenanceMenu",
@@ -1020,7 +1038,7 @@ function customerMaintenanceSchedule(username){
       {
         name: "date",
         type: "input",
-        message: "please enter date in format:MMDDYYYY 01012020"
+        message: "Please enter date in format (MMDDYYYY): "
       },{
         name: "car",
         type: "list",
@@ -1047,8 +1065,6 @@ function customerMaintenanceSchedule(username){
           price = 250
         } else if(answer.maintenanceMenu == "Engine Replacement") {
           price = 5500
-        } else if(answer.maintenanceMenu == "Return") {
-          CustomerMain(username);
         } else{
           console.log("uh-oh errror");
         }
@@ -1066,10 +1082,10 @@ function customerMaintenanceSchedule(username){
             if (err) throw err;
             
             //if no err, will go back to login, now the employee should hit the returning employee. 
-            console.log("Your car was inserted correctly for maintence!");
+            console.log('\n' + "Your car was inserted correctly for maintence!");
             // re-prompt the user for if they want to bid or post
         });
-        
+
         connection.query("INSERT INTO instance_of SET ?", 
         {
           cu_username: username,
@@ -1175,7 +1191,8 @@ function checkReview(){
       toReturn = toReturn + results[i].content + '\n';
       toDisplay.push(toReturn);
     }
-    toDisplay.upshift(header);
+    toDisplay.unshift(header);
+
     for(var i = 0; i<toDisplay.length; i++){
        console.log(toDisplay[i]);
        console.log("---------------------------------------------------");
@@ -1221,6 +1238,8 @@ function viewCars() {
      console.log("---------------------------------------------------");
    }
  });
+
+  inquirer.prompt()
 }
 
 function removeCar(ssn){
@@ -1341,6 +1360,7 @@ function buyCars(username){
        toDisplay.push(toReturn);
    }
    toDisplay.unshift(header);
+   toDisplay.push("Return");
   inquirer
       .prompt({
         name: "cars",
@@ -1348,6 +1368,7 @@ function buyCars(username){
         message: "Which Car would you like to buy?",
         choices: toDisplay
       }).then(function(answer) {
+        if(answer.cars == "Return"){CustomerMain(username); return}
           var res = answer.cars.split(" ");
           VINBought = res[1];
           //"UPDATE car SET price = " + mysql.escape(answer.price) + "WHERE VIN = " + mysql.escape(VINBought),
@@ -1401,6 +1422,7 @@ function rentCars(username){
        toDisplay.push(toReturn);
    }
    toDisplay.unshift(header);
+   toDisplay.push("Return");
   inquirer
       .prompt({
         name: "cars",
@@ -1408,6 +1430,7 @@ function rentCars(username){
         message: "Which Car would you like to rent?",
         choices: toDisplay
       }).then(function(answer) {
+        if(answer.cars == "Return"){CustomerMain(username); return}
           var res = answer.cars.split(" ");
           VINBought = res[1];
           //"UPDATE car SET price = " + mysql.escape(answer.price) + "WHERE VIN = " + mysql.escape(VINBought),

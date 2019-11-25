@@ -160,7 +160,7 @@ CREATE TABLE service_instance(
   cu_username VARCHAR(100) NOT NULL,
   b_id INT AUTO_INCREMENT NOT NULL,
   price INT NOT NULL,
-  time_book integer NOT NULL,
+  time_book VARCHAR(10000) NOT NULL,
   car_VIN VARCHAR(100),
   me_ssn char(9),
   PRIMARY KEY (b_id),

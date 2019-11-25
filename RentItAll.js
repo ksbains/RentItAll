@@ -1005,7 +1005,7 @@ function customerMaintenanceSchedule(username){
     });
 
   inquirer
-      .prompt({
+      .prompt([{
         name: "maintenanceMenu",
         type: "list",
         message: "What Service would you like",
@@ -1029,7 +1029,7 @@ function customerMaintenanceSchedule(username){
         name: "date",
         type: "input",
         message: "please enter date in format:MMDDYYYY 01012020"
-      })
+      }])
       .then(function(answer) {
         var price = 0;
         if (answer.maintenanceMenu == "Oil Change") {
@@ -1063,7 +1063,7 @@ function customerMaintenanceSchedule(username){
             price: price,
             time_book: answer.date,
             car_VIN: answer.VIN,
-            me_ssn: mechanic
+            me_ssn: answer.mechanic
           },
           function(err) {
             if (err) throw err;

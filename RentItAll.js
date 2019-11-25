@@ -969,7 +969,7 @@ inquirer
               {
                 name: "return",
                 type: "list",
-                message: "Return",
+                message: " ",
                 choices: ["Return"]
               }).then(function(answer) {
                 if(answer.return == "Return"){
@@ -1158,39 +1158,57 @@ function writeReview(username){
           });
       });
 }
-
 function checkReview(username){
-  connection.query("SELECT * FROM review", function(err, results) {
-     if (err){
-       throw err;
-     }
-    
-     
-     var toDisplay = [];
-     var header = "Review                              Location " + '\n' + "";
+  var reviews = [];
+  locations = ["315 E San Fernando", "189 Curtner Ave", "167 E Taylor St"];
+  locations.push("Return");
+    inquirer
+    .prompt({
+      name: "location",
+      type: "list",
+      message: "Choose a location",
+      choices: locations
+    }).then(function(answer) {
+      if(answer.reviews == "Return"){customerReview(username); return}
+      connection.query("SELECT * FROM review WHERE loc_address = " + mysql.escape(answer.location), function(err, results) {
+         if (err){throw err;}      
 
-    for (var i = 0; i < results.length; i++) {
-      
-      var toReturn = "";
-      toReturn = toReturn + results[i].content;
-      toReturn = toReturn + results[i].loc_address;
-      toDisplay.push(toReturn);
-    }
-    toDisplay.unshift(header);
+         var toDisplay = [];
+         var header = "Reviews" + '\n' + "";
 
-    for(var i = 0; i<toDisplay.length; i++){
-       console.log(toDisplay[i]);
-       console.log("---------------------------------------------------");
-     }
-  });
+        for (var i = 0; i < results.length; i++) {
+          
+          var toReturn = "";
+          toReturn = toReturn + results[i].content + '\n';
+          toDisplay.push(toReturn);
+        }
+
+        toDisplay.unshift(header);
+
+        for (var i = 0; i < toDisplay.length; i++) {
+          console.log(toDisplay[i]);
+        }
+
+
+        inquirer
+              .prompt(
+              {
+                name: "return",
+                type: "list",
+                message: " ",
+                choices: ["Return"]
+              }).then(function(answer) {
+                if(answer.return == "Return"){
+                  customerReview(username); return
+                }
+          });
+      });
+    });
 }
-
-
-
 
 function customerLogout(){
   start();  
-}
+}  
 
 function managerLogout(){
   start();  

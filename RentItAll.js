@@ -259,7 +259,7 @@ function receptionistMain(ssn){
         name: "receptionistMenu",
         type: "list",
         message: "What would you like to do?",
-        choices: ["View Customer", "Add Customer"]
+        choices: ["View Customer", "Add Customer", "Logout"]
       })
       .then(function(answer) {
         if(answer.receptionistMenu == "View Customer"){
@@ -268,18 +268,31 @@ function receptionistMain(ssn){
              if (err){throw err;}
 
              var toDisplay = [];
-             toReturn = "";
              header ="Receptionist  CustomerUsername";
 
              for (var i = 0; i < results.length; i++) {
                 toReturn = "";
-                toReturn = toReturn + results[i].re_ssn + results[i].cu_username;
-                toDisplay.push(customerArray[i]);
+                toReturn = toReturn + results[i].re_ssn + "    " + results[i].cu_username;
+                toDisplay.push(toReturn);
              }
              toDisplay.unshift(header);
-             console.log(toDisplay);
+             
+             for (var i = 0; i < toDisplay.length; i++) {
+               console.log(toDisplay[i]);
+             }
+             inquirer.prompt(
+                    {
+                      name: "return",
+                      type: "list",
+                      message: " ",
+                      choices: ["Return"]
+                    }).then(function(answer) {
+                      if(answer.return == "Return"){
+                        receptionistMain(ssn); return
+                      }
+                });
            });
-          receptionistMain(ssn);
+          
         } else if(answer.receptionistMenu == "Add Customer"){
               
           inquirer.prompt([
@@ -332,7 +345,7 @@ function receptionistMain(ssn){
               }
             );
             connection.query(
-              "INSERT INTO customer SET ?",
+              "INSERT INTO assist SET ?",
               {
                 cu_username: answer.username,
                 re_ssn: ssn
@@ -341,14 +354,16 @@ function receptionistMain(ssn){
                 if (err) throw err;
                 
                 //if no err, will go back to login, now the employee should hit the returning employee. 
-                console.log("Your customer was created successfully!");
+                console.log("Your assist was created successfully!");
                 // re-prompt the user for if they want to bid or post
                 receptionistMain(ssn)
               }
             );
           });
-    } else{
-      console.log("Oops should not be here at all!")
+    } else if (answer.receptionistMenu == "Logout"){
+      employeeLogout();
+    }else{
+      console.log("ooPS Should not be here at all!")
     }
   });
 }
@@ -364,8 +379,8 @@ function managerMain(ssn){
       .then(function(answer) {
         if(answer.ManagerMenu == "View Car"){
            // list the car table using connectino
-           viewCars();
-           managerMain(ssn)
+           viewCars(ssn);
+           
         } else if(answer.ManagerMenu == "Add Car"){
           //same logic as cusotmer adding car, except now fill in this ms_ssn
           locations = ["315 E San Fernando", "189 Curtner Ave", "167 E Taylor St"];
@@ -407,6 +422,11 @@ function managerMain(ssn){
                 message: "Transmission: "
               },
               {
+                name: "price",
+                type: "input",
+                message: "Price: "
+              },
+              {
                 name: "mileage",
                 type: "input",
                 message: "Mileage: "
@@ -425,7 +445,7 @@ function managerMain(ssn){
               //do some salary logic
               var source = 1;
               var purpose = "SELL";
-
+              var available = "yes";
 
               connection.query(
                 "INSERT INTO car SET ?",
@@ -442,8 +462,9 @@ function managerMain(ssn){
                   paint: answer.paint,
                   transmission: answer.transmission,
                   mileage: answer.mileage,
-                  conditions: answer.conditions
-
+                  conditions: answer.conditions,
+                  price: answer.price,
+                  available: available
                 },
                 function(err) {
                   if (err) throw err;
@@ -461,7 +482,7 @@ function managerMain(ssn){
           //modify car's price
           modifyCar(ssn);
         } else if(answer.ManagerMenu == "Logout") {
-          managerLogout();
+          employeeLogout();
         } else{
           console.log("Oops should not be here at all!")
         }
@@ -475,38 +496,115 @@ function mechanicMain(ssn){
         name: "mechanicMenu",
         type: "list",
         message: "What would you like to do?",
-        choices: ["View Schedule"]
-      })
-      .then(function(answer) {
-        if(answer.receptionistMenu == "View Schedule"){         
-          connection.query("SELECT * FROM service_instance", function(err, results) {
-           if (err){throw err;}
-           var toDisplay = [];
-           var header = "Customer UserName  bID Price Time VIN" + '\n' + "";
+        choices: ["Choose Jobs", "Do Jobs", "Logout"]
+      }).then(function(answer) {
+        if(answer.mechanicMenu == "Choose Jobs"){         
+          jobs = [];
+          var header = "B_ID  CustomerUsername Price TimeBook Car_VIN"
+          connection.query("SELECT * FROM service_instance WHERE me_ssn IS NULL", function(err,results){
+            if(err){return err;}
+            
             for (var i = 0; i < results.length; i++) {
-             if (ssn == results[i].me_ssn) {
-               var toReturn = "";
-             
-               toReturn = toReturn + results[i].cu_username + " ";
-               toReturn = toReturn + results[i].b_id + " ";
-               toReturn = toReturn + results[i].price + " ";
-               toReturn = toReturn + results[i].time_book + " ";
-               toReturn = toReturn + results[i].car_VIN;
+              toReturn = "";
+              toReturn = toReturn + results[i].b_id + " ";
+              toReturn = toReturn + results[i].cu_username+ " ";
+              toReturn = toReturn + results[i].price+ " ";
+              toReturn = toReturn + results[i].time_book+ " ";
+              toReturn = toReturn + results[i].car_VIN+ " ";
 
-               toDisplay.push(toReturn);
-             }
-               
-             }
-           toDisplay.unshift(header);
+              jobs.push(toReturn);
+            }
+            jobs.unshift(header);
+            jobs.push("Return");
+          
+          inquirer.prompt({
+            name:"job",
+            type: "list",
+            message:"Choose a job",
+            choices: jobs
+          }).then(function(answer){
+                if(answer.cars == "Return"){CustomerMain(username); return}
+              var res = answer.job.split(" ");
+              jobID = res[0];
+              console.log("the b_id is: " + jobID);
+              //"UPDATE car SET price = " + mysql.escape(answer.price) + "WHERE VIN = " + mysql.escape(VINBought),
+              connection.query(
+                "UPDATE service_instance SET me_ssn = "+ mysql.escape(ssn) + "WHERE b_id = " + mysql.escape(jobID),
+                function(err) {
+                  if (err) throw err;
+                  //if there is no error then it will 
+                  console.log("Thanks for picking up the job!");
 
-           for(var i = 0; i<toDisplay.length; i++){
+                  inquirer.prompt(
+                    {
+                      name: "return",
+                      type: "list",
+                      message: " ",
+                      choices: ["Return"]
+                    }).then(function(answer) {
+                      if(answer.return == "Return"){
+                        mechanicMain(ssn); return
+                      }
+                });
+              });
+                      
+            });
+          });      
+         } else if(answer.mechanicMenu == "Do Jobs"){
+             jobs = [];
+          var header = "B_ID  CustomerUsername Price TimeBook Car_VIN"
+          connection.query("SELECT * FROM service_instance WHERE me_ssn = " + mysql.escape(ssn), function(err,results){
+            if(err){return err;}
+            
+            for (var i = 0; i < results.length; i++) {
+              toReturn = "";
+              toReturn = toReturn + results[i].b_id + " ";
+              toReturn = toReturn + results[i].cu_username+ " ";
+              toReturn = toReturn + results[i].price+ " ";
+              toReturn = toReturn + results[i].time_book+ " ";
+              toReturn = toReturn + results[i].car_VIN+ " ";
 
-             console.log(toDisplay[i]);
-             console.log("---------------------------------------------------");
-           }
-         }); 
-      }
-    });
+              jobs.push(toReturn);
+            }
+            jobs.unshift(header);
+            jobs.push("Return");
+          
+          inquirer.prompt({
+            name:"job",
+            type: "list",
+            message:"Choose a job to do",
+            choices: jobs
+          }).then(function(answer){
+                if(answer.cars == "Return"){CustomerMain(username); return}
+              var res = answer.job.split(" ");
+              jobID = res[0];
+              console.log("the b_id is: " + jobID);
+              connection.query(
+                "DELETE from service_instance WHERE b_id = " + mysql.escape(jobID),
+                function(err) {
+                  if (err) throw err;
+                  //if there is no error then it will 
+                  console.log("Thanks for completing the job!");
+                  inquirer.prompt(
+                    {
+                      name: "return",
+                      type: "list",
+                      message: " ",
+                      choices: ["Return"]
+                    }).then(function(answer) {
+                      if(answer.return == "Return"){
+                        mechanicMain(ssn); return
+                      }
+                });
+              });
+            });
+          });
+         }else if (answer.mechanicMenu == "Logout"){
+           employeeLogout();
+         }else {
+           console.log("oops");
+         }          
+      });//end of then 
 }
 //ALL OF CUSTOMER
 
@@ -1019,6 +1117,7 @@ inquirer
 }
 
 function customerMaintenanceSchedule(username){
+  ++b_id;
   locations = ["315 E San Fernando", "189 Curtner Ave", "167 E Taylor St"];
   services = ["Oil Change", "Tire Rotation","Brake Change","Blinker Fluid","Wheel Alignment","Battery Replacement","Timing Belt Replacement","Water Pump Replacement","Engine Replacement"];
   cars = [];
@@ -1081,7 +1180,7 @@ function customerMaintenanceSchedule(username){
         connection.query(
           "INSERT INTO service_instance SET ?",
           {
-            b_id: ++b_id,
+            b_id: b_id,
             cu_username: username,
             price: price,
             time_book: answer.date,
@@ -1214,16 +1313,16 @@ function checkReview(username){
     });
 }
 
+function employeeLogout(){
+  start();  
+}
+
 function customerLogout(){
   start();  
 }  
 
-function managerLogout(){
-  start();  
-}
-
 //Helper Methods
-function viewCars() {
+function viewCars(ssn) {
   connection.query("SELECT * FROM car", function(err, results) {
    if (err){throw err;}
    
@@ -1249,9 +1348,19 @@ function viewCars() {
      console.log(toDisplay[i]);
      console.log("---------------------------------------------------");
    }
- });
 
-  inquirer.prompt()
+  inquirer.prompt(
+      {
+        name: "return",
+        type: "list",
+        message: " ",
+        choices: ["Return"]
+      }).then(function(answer) {
+        if(answer.return == "Return"){
+          managerMain(ssn); return
+        }
+  }); 
+ });
 }
 
 function removeCar(ssn){

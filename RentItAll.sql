@@ -200,6 +200,38 @@ CREATE TABLE assist(
     on delete cascade on update cascade
 );
 
+INSERT INTO service_offer
+VALUES  ('315 E San Fernando', 'Oil Change', '30'),
+        ('189 Curtner Ave', 'Oil Change', '30'),
+        ('167 E Taylor St', 'Oil Change', '30'),
+        ('315 E San Fernando', 'Tire Rotation', '40'),
+        ('189 Curtner Ave', 'Tire Rotation', '40'),
+        ('167 E Taylor St', 'Tire Rotation', '40'),
+        ('315 E San Fernando', 'Brake Change', '60'),
+        ('189 Curtner Ave', 'Brake Change', '60'),
+        ('167 E Taylor St', 'Brake Change', '60'),
+        ('315 E San Fernando', 'Blinker Fluid', '5'),
+        ('189 Curtner Ave', 'Blinker Fluid', '5'),
+        ('167 E Taylor St', 'Blinker Fluid', '5'),
+        ('315 E San Fernando', 'Wheel Alignment', '80'),
+        ('189 Curtner Ave', 'Wheel Alignment', '80'),
+        ('167 E Taylor St', 'Wheel Alignment', '80'),
+        ('315 E San Fernando', 'Battery Replacement', '50'),
+        ('189 Curtner Ave', 'Battery Replacement', '50'),
+        ('167 E Taylor St', 'Battery Replacement', '50'),
+        ('315 E San Fernando', 'Timing Belt Replacement', '200'),
+        ('189 Curtner Ave', 'Timing Belt Replacement', '200'),
+        ('167 E Taylor St', 'Timing Belt Replacement', '200'),
+        ('315 E San Fernando', 'Water Pump Replacement', '250'),
+        ('189 Curtner Ave', 'Water Pump Replacement', '250'),
+        ('167 E Taylor St', 'Water Pump Replacement', '250'),
+        ('315 E San Fernando', 'Engine Replacement', '5500'),
+        ('189 Curtner Ave', 'Engine Replacement', '5500'),
+        ('167 E Taylor St', 'Engine Replacement', '5500'),
+        ('315 E San Fernando', 'Paint Job', '3500'),
+        ('189 Curtner Ave', 'Paint Job', '3500'),
+        ('167 E Taylor St', 'Paint Job', '3500');
+
 INSERT INTO customer
 VALUES  ('testuser1', '123', 'tester1', '012013012', '315 E San Fernando'),
         ('testuser2', '345', 'tester2', '012013123', '316 E San Fernando'),

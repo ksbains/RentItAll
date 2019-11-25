@@ -64,16 +64,7 @@ function Employee(){
 
 function createEmployee(){
   console.log("welcome new Employee!");
-  var locations = [];
-  connection.query("SELECT address FROM company_locations", function(err, results) {
-   if (err){
-     throw err;
-   }
-    for (var i = 0; i < results.length; i++) {      
-      locations.push(results[i].address);
-    }     
-   }); 
-  //locations = ["123 Irvington St", "123 Washington St"];
+  locations = ["315 E San Fernando", "189 Curtner Av", "167 E Taylor St"];
   var managers = [];
   var managersID = [];
   connection.query("SELECT name, mgr_ssn FROM employee INNER JOIN manager ON employee.SSN = manager.mgr_ssn", function(err, results) {
@@ -360,15 +351,7 @@ function managerMain(ssn){
            managerMain(ssn)
         } else if(answer.ManagerMenu == "Add Car"){
           //same logic as cusotmer adding car, except now fill in this ms_ssn
-          var locations = [];
-          connection.query("SELECT address FROM company_locations", function(err, results) {
-           if (err){
-             throw err;
-           }
-            for (var i = 0; i < results.length; i++) {      
-              locations.push(results[i].address);
-            }     
-           });
+          locations = ["315 E San Fernando", "189 Curtner Av", "167 E Taylor St"];
           inquirer
             .prompt([
               {
@@ -689,15 +672,7 @@ var managers = [];
    });
 
 
-var locations = [];
-  connection.query("SELECT address FROM company_locations", function(err, results) {
-   if (err){
-     throw err;
-   }
-    for (var i = 0; i < results.length; i++) {      
-      locations.push(results[i].address);
-    }     
-   });
+locations = ["315 E San Fernando", "189 Curtner Av", "167 E Taylor St"];
   inquirer
     .prompt([
       {
@@ -848,15 +823,7 @@ function customerRentOut(username){
       managersID.push(results[i].mgr_ssn);
     }    
    });
-  var locations = [];
-  connection.query("SELECT address FROM company_locations", function(err, results) {
-   if (err){
-     throw err;
-   }
-    for (var i = 0; i < results.length; i++) {      
-      locations.push(results[i].address);
-    }     
-   });
+  locations = ["315 E San Fernando", "189 Curtner Av", "167 E Taylor St"];
   //var maSSN = "123456789";
   var source = 0;
   var purpose = "RENT"
@@ -1089,15 +1056,7 @@ function customerMaintenanceSchedule(username){
 }
 
 function customerReview(username){
-  var locations = [];
-  connection.query("SELECT address FROM company_locations", function(err, results) {
-   if (err){
-     throw err;
-   }
-    for (var i = 0; i < results.length; i++) {      
-      locations.push(results[i].address);
-    }     
-   });
+  locations = ["315 E San Fernando", "189 Curtner Av", "167 E Taylor St"];
   inquirer
       .prompt({
         name: "reviewMenu",
@@ -1122,15 +1081,7 @@ function customerReview(username){
 
 function writeReview(username){
   var id = 0;
-  var locations = [];
-  connection.query("SELECT address FROM company_locations", function(err, results) {
-   if (err){
-     throw err;
-   }
-    for (var i = 0; i < results.length; i++) {      
-      locations.push(results[i].address);
-    }     
-   });
+  locations = ["315 E San Fernando", "189 Curtner Av", "167 E Taylor St"];
   inquirer
       .prompt([{
         name: "review",

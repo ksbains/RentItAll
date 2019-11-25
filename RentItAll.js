@@ -432,7 +432,8 @@ function managerMain(ssn){
               //do some salary logic
               var source = 1;
               var purpose = "SELL";
-              var available = "yes";
+              var availablee
+               = "yes";
 
               connection.query(
                 "INSERT INTO car SET ?",
@@ -451,7 +452,7 @@ function managerMain(ssn){
                   mileage: answer.mileage,
                   conditions: answer.conditions,
                   price: answer.price,
-                  available: available
+                  available: availablec
                 },
                 function(err) {
                   if (err) throw err;

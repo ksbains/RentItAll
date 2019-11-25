@@ -158,12 +158,12 @@ CREATE TABLE review(
 
 CREATE TABLE service_instance(
   cu_username VARCHAR(100) NOT NULL,
-  b_id integer NOT NULL,
-  price INT AUTO_INCREMENT NOT NULL,
+  b_id INT AUTO_INCREMENT NOT NULL,
+  price INT NOT NULL,
   time_book integer NOT NULL,
   car_VIN VARCHAR(100),
   me_ssn char(9),
-  PRIMARY KEY (cu_username, b_id),
+  PRIMARY KEY (b_id),
   FOREIGN KEY (cu_username) REFERENCES customer(username)
     on delete cascade on update cascade,
   FOREIGN KEY (me_ssn) REFERENCES mechanic(m_ssn)
@@ -176,9 +176,7 @@ CREATE TABLE instance_of(
   b_id integer NOT NULL,
   srv_name varchar(100) NOT NULL,
   PRIMARY KEY(cu_username, b_id, srv_name),
-  FOREIGN KEY (cu_username, b_id) REFERENCES service_instance(cu_username, b_id)
-    on delete cascade on update cascade,
-  FOREIGN KEY (srv_name) REFERENCES maintenance_service(name)
+  FOREIGN KEY (b_id) REFERENCES service_instance(b_id)
     on delete cascade on update cascade
 );
 CREATE TABLE service_offer(
@@ -187,7 +185,7 @@ CREATE TABLE service_offer(
   price INT NOT NULL,
   PRIMARY KEY(loc_address, srv_name),
   FOREIGN KEY (loc_address) REFERENCES company_locations(address)
-    on delete cascade on update cascade,
+    on delete cascade on update cascade
 );
 
 CREATE TABLE assist(
@@ -199,6 +197,32 @@ CREATE TABLE assist(
   FOREIGN KEY (re_ssn) REFERENCES receptionist(r_ssn)
     on delete cascade on update cascade
 );
+
+
+INSERT INTO customer
+VALUES  ('testuser1', '123', 'tester1', '012013012', '315 E San Fernando'),
+        ('testuser2', '345', 'tester2', '012013123', '316 E San Fernando'),
+        ('testuser3', '678', 'tester3', '012013345', '317 E San Fernando'),
+        ('testuser4', '912', 'tester4', '012013234', '318 E San Fernando'),
+        ('testuser5', '949', 'tester5', '012013233', '168 E Taylor St'),
+        ('testuser6', '962', 'tester6', '012013232', '169 E Taylor St'),
+        ('testuser7', '989', 'tester7', '012013231', '198 Curtner Ave');
+
+INSERT INTO customer_type
+VALUES  ('testuser1', 'buyer'),
+        ('testuser1', 'renter'),
+        ('testuser2', 'seller'),
+        ('testuser3', 'host'),
+        ('testuser4', 'renter'),
+        ('testuser4', 'buyer'),
+        ('testuser5', 'renter'),
+        ('testuser6', 'seller'),
+        ('testuser7', 'host');
+
+INSERT INTO company_locations
+VALUES  ('315 E San Fernando', '100', '1234567894'),
+        ('189 Curtner Ave', '50', '1234567498'),
+        ('167 E Taylor St', '35', '1234567468');
 
 INSERT INTO service_offer
 VALUES  ('315 E San Fernando', 'Oil Change', '30'),
@@ -228,31 +252,6 @@ VALUES  ('315 E San Fernando', 'Oil Change', '30'),
         ('315 E San Fernando', 'Engine Replacement', '5500'),
         ('189 Curtner Ave', 'Engine Replacement', '5500'),
         ('167 E Taylor St', 'Engine Replacement', '5500');
-
-INSERT INTO customer
-VALUES  ('testuser1', '123', 'tester1', '012013012', '315 E San Fernando'),
-        ('testuser2', '345', 'tester2', '012013123', '316 E San Fernando'),
-        ('testuser3', '678', 'tester3', '012013345', '317 E San Fernando'),
-        ('testuser4', '912', 'tester4', '012013234', '318 E San Fernando'),
-        ('testuser5', '949', 'tester5', '012013233', '168 E Taylor St'),
-        ('testuser6', '962', 'tester6', '012013232', '169 E Taylor St'),
-        ('testuser7', '989', 'tester7', '012013231', '198 Curtner Ave');
-
-INSERT INTO customer_type
-VALUES  ('testuser1', 'buyer'),
-        ('testuser1', 'renter'),
-        ('testuser2', 'seller'),
-        ('testuser3', 'host'),
-        ('testuser4', 'renter'),
-        ('testuser4', 'buyer'),
-        ('testuser5', 'renter'),
-        ('testuser6', 'seller'),
-        ('testuser7', 'host');
-
-INSERT INTO company_locations
-VALUES  ('315 E San Fernando', '100', '1234567894'),
-        ('189 Curtner Ave', '50', '1234567498'),
-        ('167 E Taylor St', '35', '1234567468');
 
 INSERT INTO employee
 VALUES  ('138', 'mgr0', '315 E San Fernando', '99999999'),

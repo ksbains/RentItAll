@@ -70,8 +70,8 @@ function Employee(){
  };
 
 function createEmployee(){
-  console.log("welcome new Employee!");
-  locations = ["315 E San Fernando", "189 Curtner Av", "167 E Taylor St"];
+  console.log("Welcome new Employee!");
+  locations = ["315 E San Fernando", "189 Curtner Ave", "167 E Taylor St"];
   var managers = [];
   var managersID = [];
   connection.query("SELECT name, mgr_ssn FROM employee INNER JOIN manager ON employee.SSN = manager.mgr_ssn", function(err, results) {
@@ -129,7 +129,7 @@ function createEmployee(){
         function(err) {
           if (err) throw err;
           //if no err, will go back to login, now the employee should hit the returning employee. 
-          console.log("Your employee was created successfully!");
+          //console.log("Your employee was created successfully!");
           // re-prompt the user for if they want to bid or post
         }
       );
@@ -146,7 +146,7 @@ function createEmployee(){
           function(err) {
             if (err) throw err;
             //if no err, will go back to login, now the employee should hit the returning employee. 
-            console.log("Your mechanic was created successfully!");
+            //console.log("Your mechanic was created successfully!");
             // re-prompt the user for if they want to bid or post
           }
         );
@@ -358,7 +358,7 @@ function managerMain(ssn){
            managerMain(ssn)
         } else if(answer.ManagerMenu == "Add Car"){
           //same logic as cusotmer adding car, except now fill in this ms_ssn
-          locations = ["315 E San Fernando", "189 Curtner Av", "167 E Taylor St"];
+          locations = ["315 E San Fernando", "189 Curtner Ave", "167 E Taylor St"];
           inquirer
             .prompt([
               {
@@ -460,44 +460,119 @@ function managerMain(ssn){
 }
 
 function mechanicMain(ssn){
-  console.log("welcome to mechanic Main");
+  console.log("Welcome to mechanic Main");
   //show all of the service instances with this mechanic ssn
   inquirer.prompt({
         name: "mechanicMenu",
         type: "list",
         message: "What would you like to do?",
-        choices: ["View Schedule"]
-      })
-      .then(function(answer) {
-        if(answer.receptionistMenu == "View Schedule"){         
-          connection.query("SELECT * FROM service_instance", function(err, results) {
-           if (err){throw err;}
-           var toDisplay = [];
-           var header = "Customer UserName  bID Price Time VIN" + '\n' + "";
+        choices: ["Choose Jobs", "Do Jobs"]
+      }).then(function(answer) {
+        if(answer.mechanicMenu == "Choose Jobs"){         
+          jobs = [];
+          var header = "B_ID  CustomerUsername Price TimeBook Car_VIN"
+          connection.query("SELECT * FROM service_instance WHERE me_ssn IS NULL", function(err,results){
+            if(err){return err;}
+            
             for (var i = 0; i < results.length; i++) {
-             if (ssn == results[i].me_ssn) {
-               var toReturn = "";
-             
-               toReturn = toReturn + results[i].cu_username + " ";
-               toReturn = toReturn + results[i].b_id + " ";
-               toReturn = toReturn + results[i].price + " ";
-               toReturn = toReturn + results[i].time_book + " ";
-               toReturn = toReturn + results[i].car_VIN;
+              toReturn = "";
+              toReturn = toReturn + results[i].b_id + " ";
+              toReturn = toReturn + results[i].cu_username+ " ";
+              toReturn = toReturn + results[i].price+ " ";
+              toReturn = toReturn + results[i].time_book+ " ";
+              toReturn = toReturn + results[i].car_VIN+ " ";
 
-               toDisplay.push(toReturn);
-             }
-               
-             }
-           toDisplay.unshift(header);
+              jobs.push(toReturn);
+            }
+            jobs.unshift(header);
+            jobs.push("Return");
+          
+          inquirer.prompt({
+            name:"job",
+            type: "list",
+            message:"Choose a job",
+            choices: jobs
+          }).then(function(answer){
+                if(answer.cars == "Return"){CustomerMain(username); return}
+              var res = answer.job.split(" ");
+              jobID = res[0];
+              console.log("the b_id is: " + jobID);
+              //"UPDATE car SET price = " + mysql.escape(answer.price) + "WHERE VIN = " + mysql.escape(VINBought),
+              connection.query(
+                "UPDATE service_instance SET me_ssn = "+ mysql.escape(ssn) + "WHERE b_id = " + mysql.escape(jobID),
+                function(err) {
+                  if (err) throw err;
+                  //if there is no error then it will 
+                  console.log("Thanks for picking up the job!");
 
-           for(var i = 0; i<toDisplay.length; i++){
+                  inquirer.prompt(
+                    {
+                      name: "return",
+                      type: "list",
+                      message: " ",
+                      choices: ["Return"]
+                    }).then(function(answer) {
+                      if(answer.return == "Return"){
+                        mechanicMain(ssn); return
+                      }
+                });
+              });
+                      
+            });
+          });      
+         } else if(answer.mechanicMenu == "Do Jobs"){
+             jobs = [];
+          var header = "B_ID  CustomerUsername Price TimeBook Car_VIN"
+          connection.query("SELECT * FROM service_instance WHERE me_ssn = " + mysql.escape(ssn), function(err,results){
+            if(err){return err;}
+            
+            for (var i = 0; i < results.length; i++) {
+              toReturn = "";
+              toReturn = toReturn + results[i].b_id + " ";
+              toReturn = toReturn + results[i].cu_username+ " ";
+              toReturn = toReturn + results[i].price+ " ";
+              toReturn = toReturn + results[i].time_book+ " ";
+              toReturn = toReturn + results[i].car_VIN+ " ";
 
-             console.log(toDisplay[i]);
-             console.log("---------------------------------------------------");
-           }
-         }); 
-      }
-    });
+              jobs.push(toReturn);
+            }
+            jobs.unshift(header);
+            jobs.push("Return");
+          
+          inquirer.prompt({
+            name:"job",
+            type: "list",
+            message:"Choose a job to do",
+            choices: jobs
+          }).then(function(answer){
+                if(answer.cars == "Return"){CustomerMain(username); return}
+              var res = answer.job.split(" ");
+              jobID = res[0];
+              console.log("the b_id is: " + jobID);
+              connection.query(
+                "DELETE from service_instance WHERE b_id = " + mysql.escape(jobID),
+                function(err) {
+                  if (err) throw err;
+                  //if there is no error then it will 
+                  console.log("Thanks for completing the job!");
+                  inquirer.prompt(
+                    {
+                      name: "return",
+                      type: "list",
+                      message: " ",
+                      choices: ["Return"]
+                    }).then(function(answer) {
+                      if(answer.return == "Return"){
+                        mechanicMain(ssn); return
+                      }
+                });
+              });
+            });
+          });
+         }else {
+           console.log("oops");
+         }          
+      });//end of then 
 }
 //ALL OF CUSTOMER
 
@@ -679,7 +754,7 @@ var managers = [];
    });
 
 
-locations = ["315 E San Fernando", "189 Curtner Av", "167 E Taylor St"];
+locations = ["315 E San Fernando", "189 Curtner Ave", "167 E Taylor St"];
   inquirer
     .prompt([
       {
@@ -829,7 +904,7 @@ function customerRentOut(username){
       managersID.push(results[i].mgr_ssn);
     }    
    });
-  locations = ["315 E San Fernando", "189 Curtner Av", "167 E Taylor St"];
+  locations = ["315 E San Fernando", "189 Curtner Ave", "167 E Taylor St"];
   //var maSSN = "123456789";
   var source = 0;
   var purpose = "RENT"
@@ -1011,7 +1086,8 @@ inquirer
 }
 
 function customerMaintenanceSchedule(username){
-  locations = ["315 E San Fernando", "189 Curtner Av", "167 E Taylor St"];
+  ++b_id;
+  locations = ["315 E San Fernando", "189 Curtner Ave", "167 E Taylor St"];
   services = ["Oil Change", "Tire Rotation","Brake Change","Blinker Fluid","Wheel Alignment","Battery Replacement","Timing Belt Replacement","Water Pump Replacement","Engine Replacement"];
   cars = [];
 
@@ -1073,7 +1149,7 @@ function customerMaintenanceSchedule(username){
         connection.query(
           "INSERT INTO service_instance SET ?",
           {
-            b_id: ++b_id,
+            b_id: b_id,
             cu_username: username,
             price: price,
             time_book: answer.date,

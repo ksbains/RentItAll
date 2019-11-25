@@ -777,7 +777,6 @@ locations = ["315 E San Fernando", "189 Curtner Av", "167 E Taylor St"];
           cu_username: username,
           car_VIN: answer.VIN,
           state: state
-          
         },
         function(err) {
           if (err) {throw err;}
@@ -993,13 +992,24 @@ inquirer
 
 function customerMaintenanceSchedule(username){
   locations = ["315 E San Fernando", "189 Curtner Av", "167 E Taylor St"];
+  services = [];
+  services.push
+  meSSNs = [];
+  connection.query(
+    "SELECT * FROM mechanic", function(err, results) {
+      if (err) {throw err;}
+
+      for(var i = 0; i < results.length; i++){
+        meSSNs.push(results[i].m_ssn);
+      }
+    });
 
   inquirer
       .prompt({
         name: "maintenanceMenu",
         type: "list",
         message: "What Service would you like",
-        choices: ["Oil Change","Tire Roatation", "Brake", "Return"]
+        choices: services
       },{
         name: "location",
         type: "list",
@@ -1037,7 +1047,7 @@ function customerMaintenanceSchedule(username){
         }
 
         connection.query(
-          "INSERT INTO maintenance_service SET ?",
+          "INSERT INTO service_instance SET ?",
           {
             name: answer.maintenanceMenu,
             price: price,

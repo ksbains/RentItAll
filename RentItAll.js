@@ -17,6 +17,11 @@ connection.connect(function(err) {
   start();
 });
 
+var b_id = 0;
+
+
+
+
 // function which prompts the user to see what type they are
 function start() {
   inquirer
@@ -958,7 +963,7 @@ inquirer
          customerMaintenanceSchedule(username);
         } else if(answer.maintenanceMenu == "Check Current") {
           //sql for cars under the customer          
-          connection.query("SELECT * FROM service_instance", function(err, results) {
+          connection.query("SELECT * FROM service_instance WHERE cu_username = " + mysql.escape(username), function(err, results) {
              if (err){
                throw err;
              }
@@ -975,7 +980,7 @@ inquirer
               toReturn = toReturn + results[i].me_ssn + " ";
               toDisplay.push(toReturn);
             }
-            toDisplay.upshift(heasder);
+            toDisplay.upshift(header);
             for(var i = 0; i<toDisplay.length; i++){
                console.log(toDisplay[i]);
                console.log("---------------------------------------------------");
@@ -994,16 +999,12 @@ function customerMaintenanceSchedule(username){
   locations = ["315 E San Fernando", "189 Curtner Av", "167 E Taylor St"];
   services = ["Oil Change", "Tire Rotation","Brake Change","Blinker Fluid","Wheel Alignment","Battery Replacement","Timing Belt Replacement","Water Pump Replacement","Engine Replacement"];
   services.push("Return");
-  meSSNs = [];
-  connection.query(
-    "SELECT * FROM mechanic", function(err, results) {
-      if (err) {throw err;}
-
-      for(var i = 0; i < results.length; i++){
-        meSSNs.push(results[i].m_ssn);
-      }
-    });
-
+  cars = [];
+  connection.query("SELECT car_VIN FROM car_relation WHERE cu_username = " + mysql.escape(username), function(err, results){
+    for(var i =0; i< results.length; i++){
+      cars.push(results[i].car_VIN);
+    }
+  });
   inquirer
       .prompt([{
         name: "maintenanceMenu",
@@ -1017,18 +1018,14 @@ function customerMaintenanceSchedule(username){
         choices: locations
       },
       {
-        name: "mechanic",
-        type: "list",
-        message: "Choose a mechanic",
-        choices: meSSNs
-      },{
-        name: "VIN",
-        type: "input",
-        message: "VIN:"
-      }, {
         name: "date",
         type: "input",
         message: "please enter date in format:MMDDYYYY 01012020"
+      },{
+        name: "car",
+        type: "list",
+        message: "Select a car by VIN",
+        choices: cars
       }])
       .then(function(answer) {
         var price = 0;
@@ -1059,20 +1056,32 @@ function customerMaintenanceSchedule(username){
         connection.query(
           "INSERT INTO service_instance SET ?",
           {
+            b_id: ++b_id,
             cu_username: username,
             price: price,
             time_book: answer.date,
-            car_VIN: answer.VIN,
-            me_ssn: answer.mechanic
+            car_VIN: answer.car
           },
           function(err) {
             if (err) throw err;
             
             //if no err, will go back to login, now the employee should hit the returning employee. 
-            console.log("Your car was inserted correctly!");
+            console.log("Your car was inserted correctly for maintence!");
             // re-prompt the user for if they want to bid or post
-            customerMain(username);          
-          })
+        });
+        
+        connection.query("INSERT INTO instance_of SET ?", 
+        {
+          cu_username: username,
+          b_id: b_id,
+          srv_name: answer.maintenanceMenu
+        },function(err) {
+            if (err) {throw err;}
+              
+              console.log("inserted into the car relation!")
+              
+           });
+        CustomerMain(username); 
       });
 }
 

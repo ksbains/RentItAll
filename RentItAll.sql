@@ -158,7 +158,7 @@ CREATE TABLE review(
 
 CREATE TABLE service_instance(
   cu_username VARCHAR(100) NOT NULL,
-  b_id INT AUTO_INCREMENT NOT NULL,
+  b_id INT NOT NULL,
   price INT NOT NULL,
   time_book VARCHAR(10000) NOT NULL,
   car_VIN VARCHAR(100),
@@ -171,20 +171,21 @@ CREATE TABLE service_instance(
   FOREIGN KEY (car_VIN) REFERENCES car(VIN)
     on delete set null on update cascade
 );
-CREATE TABLE instance_of(
-  cu_username varchar(100) NOT NULL,
-  b_id integer NOT NULL,
-  srv_name varchar(100) NOT NULL,
-  PRIMARY KEY(cu_username, b_id, srv_name),
-  FOREIGN KEY (b_id) REFERENCES service_instance(b_id)
-    on delete cascade on update cascade
-);
+
 CREATE TABLE service_offer(
   loc_address VARCHAR(100) NOT NULL,
   srv_name VARCHAR(100) NOT NULL,
   price INT NOT NULL,
   PRIMARY KEY(loc_address, srv_name),
   FOREIGN KEY (loc_address) REFERENCES company_locations(address)
+    on delete cascade on update cascade
+);
+CREATE TABLE instance_of(
+  cu_username varchar(100) NOT NULL,
+  b_id integer NOT NULL,
+  srv_name varchar(100) NOT NULL,
+  PRIMARY KEY(cu_username, b_id, srv_name),
+  FOREIGN KEY (b_id) REFERENCES service_instance(b_id)
     on delete cascade on update cascade
 );
 

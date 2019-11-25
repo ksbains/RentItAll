@@ -23,6 +23,7 @@ global.b_id = 0;
 
 
 
+
 // function which prompts the user to see what type they are
 function start() {
   inquirer
@@ -1015,8 +1016,8 @@ function customerMaintenanceSchedule(username){
   cars = [];
 
   //SELECT car_VIN FROM car_relation WHERE  NOT EXISTS (SELECT * from service_instance WHERE cu_username = 'k');
-  var SQL = "SELECT car_VIN FROM car_relation WHERE NOT EXISTS (SELECT * from service_instance WHERE cu_username = "+ mysql.escape(username)+ " )";
-  SQL = "SELECT car_VIN FROM car_relation WHERE cu_username = "+ mysql.escape(username);
+  // var SQL = "SELECT car_VIN FROM car_relation WHERE NOT EXISTS (SELECT * from service_instance WHERE cu_username = "+ mysql.escape(username)+ " )";
+  var SQL = "SELECT car_VIN FROM car_relation WHERE cu_username = "+ mysql.escape(username);
   connection.query(SQL, function(err, results){
     for(var i =0; i< results.length; i++){
       cars.push(results[i].car_VIN);
@@ -1102,7 +1103,6 @@ function customerMaintenanceSchedule(username){
 }
 
 function customerReview(username){
-  locations = ["315 E San Fernando", "189 Curtner Av", "167 E Taylor St"];
   inquirer
       .prompt({
         name: "reviewMenu",
@@ -1112,8 +1112,7 @@ function customerReview(username){
       })
       .then(function(answer) {
         if (answer.reviewMenu == "Check Reviews") {
-         checkReview();
-         //implemnt
+         checkReview(username);
         } else if(answer.reviewMenu == "Write Reviews") {
           writeReview(username);
           //Implement
@@ -1126,32 +1125,26 @@ function customerReview(username){
 }
 
 function writeReview(username){
-  var id = 0;
-  locations = ["315 E San Fernando", "189 Curtner Av", "167 E Taylor St"];
-  inquirer
-      .prompt([{
+  locations = ["315 E San Fernando", "189 Curtner Ave", "167 E Taylor St"];
+  inquirer.prompt([{
         name: "review",
         type: "input",
         message: "Please write your review"
       },
       {
+        name: "stars",
+        type: "list",
+        message: "How many stars would you rate??",
+        choices: ["1","2","3","4","5"]
+      },{
         name: "location",
         type: "list",
         message: "What location are you at?",
         choices: locations
-      },
-      {
-        name: "stars",
-        type: "list",
-        message: "How many stars would you rate??",
-        choices: [1,2,3,4,5]
-      }
-      ]).then(function(answer) {
+      }]).then(function(answer) {
         console.log("here is your review: " + answer.review);
-        connection.query(
-          "INSERT INTO review SET ?",
+        connection.query("INSERT INTO review SET ?",
           {
-            r_id: id,
             stars: answer.stars,
             content: answer.review,
             cu_username: username, 
@@ -1159,36 +1152,28 @@ function writeReview(username){
           },
           function(err) {
             if (err) throw err;
-            
-            //if no err, will go back to login, now the employee should hit the returning employee. 
-            console.log("Your car was inserted correctly!");
-            // re-prompt the user for if they want to bid or post
-            managerMain();          
-          })
-        
-        console.log("you review has been entered");
-        CustomerMain(username);
+            //this is after review has been inserted
+            console.log("you review has been entered");
+            CustomerMain(username);
+          });
       });
 }
 
-function checkReview(){
-  var reviews = [];
+function checkReview(username){
   connection.query("SELECT * FROM review", function(err, results) {
      if (err){
        throw err;
      }
-      for (var i = 0; i < results.length; i++) {      
-        reviews.push(results[i].content);
-      }     
-     });
+    
      
      var toDisplay = [];
-     var header = "Reviews" + '\n' + "";
+     var header = "Review                              Location " + '\n' + "";
 
-    for (var i = 0; i < reviews.length; i++) {
+    for (var i = 0; i < results.length; i++) {
       
       var toReturn = "";
-      toReturn = toReturn + results[i].content + '\n';
+      toReturn = toReturn + results[i].content;
+      toReturn = toReturn + results[i].loc_address;
       toDisplay.push(toReturn);
     }
     toDisplay.unshift(header);
@@ -1197,6 +1182,7 @@ function checkReview(){
        console.log(toDisplay[i]);
        console.log("---------------------------------------------------");
      }
+  });
 }
 
 

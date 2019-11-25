@@ -144,8 +144,8 @@ CREATE TABLE receptionist(
 );
 
 CREATE TABLE review(
-  r_id integer NOT NULL,
-  stars integer NOT NULL,
+  r_id integer AUTO_INCREMENT NOT NULL,
+  stars VARCHAR(10) NOT NULL,
   content varchar(300),
   cu_username varchar(100),
   loc_address varchar(100) NOT NULL,

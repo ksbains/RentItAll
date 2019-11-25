@@ -32,7 +32,7 @@ console.log = function(d) { //
 
 
 global.b_id = 0;
-
+locations = ["315 E San Fernando", "189 Curtner Ave", "167 E Taylor St"];
 
 // function which prompts the user to see what type they are
 function start() {
@@ -81,7 +81,7 @@ function Employee(){
 
 function createEmployee(){
   console.log("\nWelcome new employee!");
-  locations = ["315 E San Fernando", "189 Curtner Ave", "167 E Taylor St"];
+  //locations = ["315 E San Fernando", "189 Curtner Ave", "167 E Taylor St"];
   var managers = [];
   var managersID = [];
   connection.query("SELECT name, mgr_ssn FROM employee INNER JOIN manager ON employee.SSN = manager.mgr_ssn", function(err, results) {
@@ -93,7 +93,7 @@ function createEmployee(){
       managersID.push(results[i].mgr_ssn);
     }     
    }); 
-  
+  managers.push("None");
   inquirer
     .prompt([
        {
@@ -101,6 +101,11 @@ function createEmployee(){
         type: "list",
         message: "\nWhat position are you?",
         choices: ["Mechanic", "Manager", "Receptionist"]
+      },{
+        name: "manager",
+        type: "list",
+        message: "\nWho is your manager? If you are a manager or do not have a manager select none.",
+        choices: managers
       },
       {
         name: "SSN",
@@ -143,6 +148,19 @@ function createEmployee(){
           // re-prompt the user for if they want to bid or post
         }
       );
+
+      //manager logic
+      managersID.unshift("None");
+      var idx = 0;
+      for (var i = 0; i < managers.length; i++) {
+        if(managers[i] == answer.manager){
+          idx = i;
+        }
+      }
+
+
+
+
       //insert into sub tables
       if(answer.position == "Mechanic"){
           connection.query(
@@ -151,7 +169,7 @@ function createEmployee(){
             //this is the meachinc's ssn
             m_ssn: answer.SSN,
             //ma_ssn is the manager ssn
-            ma_ssn: answer.manager,
+            ma_ssn: managersID[idx],
           },
           function(err) {
             if (err) throw err;
@@ -168,7 +186,7 @@ function createEmployee(){
             //this is the meachinc's ssn
             r_ssn: answer.SSN,
             //ma_ssn is the manager ssn
-            ma_ssn: answer.manager,
+            ma_ssn: managersID[idx],
           },
           function(err) {
             if (err) throw err;
@@ -383,7 +401,7 @@ function managerMain(ssn){
            
         } else if(answer.ManagerMenu == "Add Car"){
           //same logic as cusotmer adding car, except now fill in this ms_ssn
-          locations = ["315 E San Fernando", "189 Curtner Ave", "167 E Taylor St"];
+          //locations = ["315 E San Fernando", "189 Curtner Ave", "167 E Taylor St"];
           inquirer
             .prompt([
               {
@@ -787,7 +805,7 @@ var managers = [];
    });
 
 
-locations = ["315 E San Fernando", "189 Curtner Ave", "167 E Taylor St"];
+//locations = ["315 E San Fernando", "189 Curtner Ave", "167 E Taylor St"];
   inquirer
     .prompt([
       {
@@ -847,12 +865,16 @@ locations = ["315 E San Fernando", "189 Curtner Ave", "167 E Taylor St"];
         name: "manager",
         type: "list",
         message: "Choose Manager: ",
-        choices: managersID
+        choices: managers
       }      
     ]).then(function(answer) {
-      
+      var idx = 0;
       //manager logic
-
+      for (var i = 0; i < managers.length; i++) {
+        if(managers[i] == answer.manager){
+          idx = i
+        }
+      }
       //do some salary logic
       var source = 0;
       var purpose = "SELL";
@@ -862,7 +884,7 @@ locations = ["315 E San Fernando", "189 Curtner Ave", "167 E Taylor St"];
         {
           VIN: answer.VIN,
           loc_address: answer.location,
-          ma_ssn: answer.manager,
+          ma_ssn: managersID[idx],
           source: source,
           price: answer.price,
           purpose: purpose,
@@ -936,7 +958,7 @@ function customerRentOut(username){
       managersID.push(results[i].mgr_ssn);
     }    
    });
-  locations = ["315 E San Fernando", "189 Curtner Ave", "167 E Taylor St"];
+  //locations = ["315 E San Fernando", "189 Curtner Ave", "167 E Taylor St"];
   //var maSSN = "123456789";
   var source = 0;
   var purpose = "RENT"
@@ -1010,17 +1032,23 @@ function customerRentOut(username){
         name: "manager",
         type: "list",
         message: "Choose Manager: ",
-        choices: managersID
+        choices: managers
       }      
     ]).then(function(answer) {
-      //do some salary logic
+      //do some manager logic
+      var idx = 0;
+      for (var i = 0; i < managers.length; i++) {
+        if(managers[i] == answer.manager){
+          idx = i;
+        }
+      }
       var available = "yes";
       connection.query(
         "INSERT INTO car SET ?",
         {
           VIN: answer.VIN,
           loc_address: answer.location,
-          ma_ssn: answer.manager,
+          ma_ssn: managersID[idx],
           source: source,
           price: answer.price,
           purpose: purpose,
@@ -1119,7 +1147,7 @@ inquirer
 
 function customerMaintenanceSchedule(username){
   ++b_id;
-  locations = ["315 E San Fernando", "189 Curtner Ave", "167 E Taylor St"];
+  //locations = ["315 E San Fernando", "189 Curtner Ave", "167 E Taylor St"];
   services = ["Oil Change", "Tire Rotation","Brake Change","Blinker Fluid","Wheel Alignment","Battery Replacement","Timing Belt Replacement","Water Pump Replacement","Engine Replacement"];
   cars = [];
 
@@ -1233,7 +1261,7 @@ function customerReview(username){
 }
 
 function writeReview(username){
-  locations = ["315 E San Fernando", "189 Curtner Ave", "167 E Taylor St"];
+  //locations = ["315 E San Fernando", "189 Curtner Ave", "167 E Taylor St"];
   inquirer.prompt([{
         name: "review",
         type: "input",

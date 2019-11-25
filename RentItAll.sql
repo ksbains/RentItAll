@@ -254,15 +254,15 @@ VALUES  ('315 E San Fernando', 'Oil Change', '30'),
         ('167 E Taylor St', 'Engine Replacement', '5500');
 
 INSERT INTO employee
-VALUES  ('138', 'mgr0', '315 E San Fernando', '99999999'),
-        ('1', 'mgr1', '315 E San Fernando', '71000'),
-        ('2', 'mgr2', '189 Curtner Ave', '70000'),
-        ('3', 'mch1', '315 E San Fernando', '52000'),
-        ('4', 'mch2', '189 Curtner Ave', '51000'),
-        ('5', 'mch3', '167 E Taylor St', '50000'),
-        ('6', 'rep1', '167 E Taylor St', '63000'),
-        ('7', 'rep2', '189 Curtner Ave', '62000'),
-        ('8', 'rep2', '315 E San Fernando', '61000');
+VALUES  ('138', 'mgr0', '315 E San Fernando', '95000'),
+        ('1', 'mgr1', '315 E San Fernando', '95000'),
+        ('2', 'mgr2', '189 Curtner Ave', '95000'),
+        ('3', 'mch1', '315 E San Fernando', '95000'),
+        ('4', 'mch2', '189 Curtner Ave', '65000'),
+        ('5', 'mch3', '167 E Taylor St', '65000'),
+        ('6', 'rep1', '167 E Taylor St', '45000'),
+        ('7', 'rep2', '189 Curtner Ave', '45000'),
+        ('8', 'rep3', '315 E San Fernando', '45000');
 
 
 INSERT INTO manager

@@ -249,7 +249,7 @@ function receptionistMain(ssn){
         name: "receptionistMenu",
         type: "list",
         message: "What would you like to do?",
-        choices: ["View Customer", "Add Customer"]
+        choices: ["View Customer", "Add Customer", "Logout"]
       })
       .then(function(answer) {
         if(answer.receptionistMenu == "View Customer"){
@@ -258,18 +258,31 @@ function receptionistMain(ssn){
              if (err){throw err;}
 
              var toDisplay = [];
-             toReturn = "";
              header ="Receptionist  CustomerUsername";
 
              for (var i = 0; i < results.length; i++) {
                 toReturn = "";
-                toReturn = toReturn + results[i].re_ssn + results[i].cu_username;
-                toDisplay.push(customerArray[i]);
+                toReturn = toReturn + results[i].re_ssn + "    " + results[i].cu_username;
+                toDisplay.push(toReturn);
              }
              toDisplay.unshift(header);
-             console.log(toDisplay);
+             
+             for (var i = 0; i < toDisplay.length; i++) {
+               console.log(toDisplay[i]);
+             }
+             inquirer.prompt(
+                    {
+                      name: "return",
+                      type: "list",
+                      message: " ",
+                      choices: ["Return"]
+                    }).then(function(answer) {
+                      if(answer.return == "Return"){
+                        receptionistMain(ssn); return
+                      }
+                });
            });
-          receptionistMain(ssn);
+          
         } else if(answer.receptionistMenu == "Add Customer"){
               
           inquirer.prompt([
@@ -315,14 +328,11 @@ function receptionistMain(ssn){
               function(err) {
                 if (err) throw err;
                 
-                //if no err, will go back to login, now the employee should hit the returning employee. 
                 console.log("The Customer was created successfully!");
-                // re-prompt the user for if they want to bid or post
-                receptionistMain(ssn)
               }
             );
             connection.query(
-              "INSERT INTO customer SET ?",
+              "INSERT INTO assist SET ?",
               {
                 cu_username: answer.username,
                 re_ssn: ssn
@@ -331,13 +341,15 @@ function receptionistMain(ssn){
                 if (err) throw err;
                 
                 //if no err, will go back to login, now the employee should hit the returning employee. 
-                console.log("Your employee was created successfully!");
+                console.log("Your assist was created successfully!");
                 // re-prompt the user for if they want to bid or post
                 receptionistMain(ssn)
               }
             );
           });
-    } else{
+    } else if (answer.receptionistMenu == "Logout"){
+      employeeLogout();
+    }else{
       console.log("ooPS Should not be here at all!")
     }
   });
@@ -452,7 +464,7 @@ function managerMain(ssn){
           //modify car's price
           modifyCar(ssn);
         } else if(answer.ManagerMenu == "Logout") {
-          managerLogout();
+          employeeLogout();
         } else{
           console.log("ooPS Should not be here at all!")
         }
@@ -466,7 +478,7 @@ function mechanicMain(ssn){
         name: "mechanicMenu",
         type: "list",
         message: "What would you like to do?",
-        choices: ["Choose Jobs", "Do Jobs"]
+        choices: ["Choose Jobs", "Do Jobs", "Logout"]
       }).then(function(answer) {
         if(answer.mechanicMenu == "Choose Jobs"){         
           jobs = [];
@@ -569,6 +581,8 @@ function mechanicMain(ssn){
               });
             });
           });
+         }else if (answer.mechanicMenu == "Logout"){
+           employeeLogout();
          }else {
            console.log("oops");
          }          
@@ -1282,13 +1296,13 @@ function checkReview(username){
     });
 }
 
+function employeeLogout(){
+  start();  
+}
+
 function customerLogout(){
   start();  
 }  
-
-function managerLogout(){
-  start();  
-}
 
 //Helper Methods
 function viewCars() {

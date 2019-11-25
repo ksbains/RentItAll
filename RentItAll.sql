@@ -255,18 +255,30 @@ VALUES  ('315 E San Fernando', 'Oil Change', '30'),
 
 INSERT INTO employee
 VALUES  ('138', 'mgr0', '315 E San Fernando', '99999999'),
-        ('123456789', 'mgr1', '315 E San Fernando', '200000'),
-        ('123456788', 'mch1', '315 E San Fernando', '100000'),
-        ('123456787', 'rep1', '167 E Taylor St', '100000'),
-        ('123456786', 'rep2', '189 Curtner Ave', '100000'),
-        ('123456785', 'mgr2', '189 Curtner Ave', '200000');
+        ('1', 'mgr1', '315 E San Fernando', '71000'),
+        ('2', 'mgr2', '189 Curtner Ave', '70000'),
+        ('3', 'mch1', '315 E San Fernando', '52000'),
+        ('4', 'mch2', '189 Curtner Ave', '51000'),
+        ('5', 'mch3', '167 E Taylor St', '50000'),
+        ('6', 'rep1', '167 E Taylor St', '63000'),
+        ('7', 'rep2', '189 Curtner Ave', '62000'),
+        ('8', 'rep2', '315 E San Fernando', '61000');
+
 
 INSERT INTO manager
 VALUES  ('138'),  
-        ('123456789'),
-        ('123456788'),
-        ('123456786'),
-        ('123456785');
+        ('1'),
+        ('2');
+
+INSERT INTO mechanic
+VALUES  ('3', '138'),  
+        ('4', '138'),
+        ('5', '138');
+
+INSERT INTO receptionist
+VALUES  ('6', '138'),  
+        ('7', '138'),
+        ('8', '138');
 
 INSERT INTO car
 VALUES  ('DHB100ZASFG','315 E San Fernando', NULL, 0, 'RENT', 'GAS',

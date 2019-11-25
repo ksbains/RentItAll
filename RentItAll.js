@@ -17,11 +17,21 @@ connection.connect(function(err) {
   start();
 });
 
+/*------------------------Logging------------------------*/ 
+// Sends log info to debug.log file
+var fs = require('fs');
+var util = require('util');
+var log_file = fs.createWriteStream(__dirname + '/debug.log', {flags : 'w'});
+var log_stdout = process.stdout;
+
+console.log = function(d) { //
+  log_file.write(util.format(d) + '\n');
+  log_stdout.write(util.format(d) + '\n');
+};
+/*------------------------Logging------------------------*/ 
+
 
 global.b_id = 0;
-
-
-
 
 
 // function which prompts the user to see what type they are
@@ -51,7 +61,7 @@ function Employee(){
       .prompt({
         name: "userType",
         type: "list",
-        message: "Are you a new or returning Employee",
+        message: "\nAre you a new or returning employee?",
         choices: ["New Employee", "Returning Employee", "Return"]
       })
       .then(function(answer) {
@@ -70,8 +80,8 @@ function Employee(){
  };
 
 function createEmployee(){
-  console.log("welcome new Employee!");
-  locations = ["315 E San Fernando", "189 Curtner Av", "167 E Taylor St"];
+  console.log("\nWelcome new employee!");
+  locations = ["315 E San Fernando", "189 Curtner Ave", "167 E Taylor St"];
   var managers = [];
   var managersID = [];
   connection.query("SELECT name, mgr_ssn FROM employee INNER JOIN manager ON employee.SSN = manager.mgr_ssn", function(err, results) {
@@ -89,7 +99,7 @@ function createEmployee(){
        {
         name: "position",
         type: "list",
-        message: "What position are you?",
+        message: "\nWhat position are you?",
         choices: ["Mechanic", "Manager", "Receptionist"]
       },
       {
@@ -105,7 +115,7 @@ function createEmployee(){
       {
         name: "location",
         type: "list",
-        message: "What location are you at?",
+        message: "\nWhat location are you at?",
         choices: locations
       }]).then(function(answer) {
       var salary = 0;
@@ -129,7 +139,7 @@ function createEmployee(){
         function(err) {
           if (err) throw err;
           //if no err, will go back to login, now the employee should hit the returning employee. 
-          console.log("Your employee was created successfully!");
+          console.log("\nYour employee was created successfully!");
           // re-prompt the user for if they want to bid or post
         }
       );
@@ -146,7 +156,7 @@ function createEmployee(){
           function(err) {
             if (err) throw err;
             //if no err, will go back to login, now the employee should hit the returning employee. 
-            console.log("Your mechanic was created successfully!");
+            console.log("\nYour mechanic account was created successfully!");
             // re-prompt the user for if they want to bid or post
           }
         );
@@ -163,7 +173,7 @@ function createEmployee(){
           function(err) {
             if (err) throw err;
             //if no err, will go back to login, now the employee should hit the returning employee. 
-            console.log("Your receptionist was created successfully!");
+            console.log("\nYour receptionist account was created successfully!");
             // re-prompt the user for if they want to bid or post
           }
         );
@@ -178,13 +188,13 @@ function createEmployee(){
           function(err) {
             if (err) throw err;
             //if no err, will go back to login, now the employee should hit the returning employee. 
-            console.log("Your manager was created successfully!");
+            console.log("\nYour manager account was created successfully!");
             // re-prompt the user for if they want to bid or post
           }
         );
         managerMain();
       }else{
-        console.log("all of the sub menues have failed and should not end up here");
+        console.log("All of the sub menus have failed and should not have ended up here.");
       }
     });
 }
@@ -234,7 +244,7 @@ function Employeelogin() {
               } 
             } else{
                 if(i == nameArray.length-1){
-                  console.log("your username and/or ssn is incorrect, please try again");
+                  console.log("Your username and/or ssn is incorrect, please try again!");
                   Employeelogin();
                 }
               }
@@ -244,7 +254,7 @@ function Employeelogin() {
 }  
 
 function receptionistMain(ssn){
-  console.log("welcome to receptionist Main");
+  console.log("\nWelcome to receptionist main!");
   inquirer.prompt({
         name: "receptionistMenu",
         type: "list",
@@ -276,28 +286,28 @@ function receptionistMain(ssn){
             {
               name: "username",
               type: "input",
-              message: "What is your username"
+              message: "What is your username?"
             },
             {
               name: "password",
               type: "input",
-              message: "What is your password",
+              message: "What is your password?",
               
             },
             {
               name: "name",
               type: "input",
-              message: "What is your name"
+              message: "What is your name?"
             },
             {
               name: "address",
               type: "input",
-              message: "What is your address"
+              message: "What is your address?"
             },
             {
               name: "phone_number",
               type: "input",
-              message: "What is your phone_number"
+              message: "What is your phone_number?"
             }
           ])
           .then(function(answer) {
@@ -316,7 +326,7 @@ function receptionistMain(ssn){
                 if (err) throw err;
                 
                 //if no err, will go back to login, now the employee should hit the returning employee. 
-                console.log("The Customer was created successfully!");
+                console.log("The customer was created successfully!");
                 // re-prompt the user for if they want to bid or post
                 receptionistMain(ssn)
               }
@@ -331,20 +341,20 @@ function receptionistMain(ssn){
                 if (err) throw err;
                 
                 //if no err, will go back to login, now the employee should hit the returning employee. 
-                console.log("Your employee was created successfully!");
+                console.log("Your customer was created successfully!");
                 // re-prompt the user for if they want to bid or post
                 receptionistMain(ssn)
               }
             );
           });
     } else{
-      console.log("ooPS Should not be here at all!")
+      console.log("Oops should not be here at all!")
     }
   });
 }
 
 function managerMain(ssn){
-  console.log("welcome to manager Main");
+  console.log("\nWelcome to manager main!");
   inquirer.prompt({
         name: "ManagerMenu",
         type: "list",
@@ -358,7 +368,7 @@ function managerMain(ssn){
            managerMain(ssn)
         } else if(answer.ManagerMenu == "Add Car"){
           //same logic as cusotmer adding car, except now fill in this ms_ssn
-          locations = ["315 E San Fernando", "189 Curtner Av", "167 E Taylor St"];
+          locations = ["315 E San Fernando", "189 Curtner Ave", "167 E Taylor St"];
           inquirer
             .prompt([
               {
@@ -396,7 +406,6 @@ function managerMain(ssn){
                 type: "input",
                 message: "Transmission: "
               },
-
               {
                 name: "mileage",
                 type: "input",
@@ -409,7 +418,7 @@ function managerMain(ssn){
               },{
                 name: "location",
                 type: "list",
-                message: "Choose Location",
+                message: "Choose Location: ",
                 choices: locations
               }      
             ]).then(function(answer) {
@@ -454,13 +463,13 @@ function managerMain(ssn){
         } else if(answer.ManagerMenu == "Logout") {
           managerLogout();
         } else{
-          console.log("ooPS Should not be here at all!")
+          console.log("Oops should not be here at all!")
         }
       });
 }
 
 function mechanicMain(ssn){
-  console.log("welcome to mechanic Main");
+  console.log("\nWelcome to mechanic main!");
   //show all of the service instances with this mechanic ssn
   inquirer.prompt({
         name: "mechanicMenu",
@@ -506,7 +515,7 @@ function Customer() {
       .prompt({
         name: "customerType",
         type: "list",
-        message: "Are you a new or returning customer",
+        message: "\nAre you a new or returning customer?",
         choices: ["New Customer", "Returning Customer", "Return"]
       })
       .then(function(answer) {
@@ -530,28 +539,28 @@ function createCustomer(){
       {
         name: "username",
         type: "input",
-        message: "What is your username"
+        message: "\nWhat is your username?"
       },
       {
         name: "password",
         type: "input",
-        message: "What is your password",
+        message: "What is your password?",
         
       },
       {
         name: "name",
         type: "input",
-        message: "What is your name"
+        message: "What is your name?"
       },
       {
         name: "address",
         type: "input",
-        message: "What is your address"
+        message: "What is your address?"
       },
       {
         name: "phone_number",
         type: "input",
-        message: "What is your phone_number"
+        message: "What is your phone number?"
       }
     ])
     .then(function(answer) {
@@ -585,12 +594,12 @@ function CustomerLogin() {
       {
         name: "username",
         type: "input",
-        message: "username"
+        message: "Username:"
       },
       {
         name: "password",
         type: "password",
-        message: "password"
+        message: "Password:"
       }
     ])
     .then(function(answer) {
@@ -605,7 +614,7 @@ function CustomerLogin() {
                i = results.length++;
             }else {
               if(i == results.length-1){
-                console.log("your username and/or ssn is incorrect, please try again");
+                console.log("Your username and/or ssn is incorrect, please try again!");
                 Customerlogin();
               }
             }
@@ -620,8 +629,8 @@ function CustomerMain(username) {
       .prompt({
         name: "menu",
         type: "list",
-        message: "What would you like to do?",
-        choices: ["Buy" , "Sell", "Rent" ,"Rentout", "Maintainence" , "Review", "Logout"]
+        message: "\nWhat would you like to do?",
+        choices: ["Buy" , "Sell", "Rent" ,"Rentout", "Maintenance" , "Review", "Logout"]
       })
       .then(function(answer) {
         if (answer.menu == "Buy") {
@@ -632,7 +641,7 @@ function CustomerMain(username) {
           customerRent(username);  
         } else if (answer.menu == "Rentout") {
           customerRentOut(username);  
-        } else if (answer.menu == "Maintainence") {
+        } else if (answer.menu == "Maintenance") {
           customerMaintenance(username);
         } else if (answer.menu == "Review") {
           customerReview(username);  
@@ -647,11 +656,11 @@ function customerBuy(username){
       .prompt({
         name: "buyMenu",
         type: "list",
-        message: "what would you like to do",
-        choices: ["List cars", "Filter", "Return"]
+        message: "\nWhat would you like to do?",
+        choices: ["List Cars", "Filter", "Return"]
       })
       .then(function(answer) {
-        if (answer.buyMenu == "List cars") {
+        if (answer.buyMenu == "List Cars") {
          buyCars(username)
         } else if(answer.buyMenu == "Filter") {
           console.log("Filter!!!!!!");
@@ -660,7 +669,7 @@ function customerBuy(username){
         } else if(answer.buyMenu == "Return") {
           CustomerMain(username);
         } else{
-          console.log("oh no, not good");
+          console.log("Oh no, not good!");
         }
       });  
 }
@@ -679,7 +688,7 @@ var managers = [];
    });
 
 
-locations = ["315 E San Fernando", "189 Curtner Av", "167 E Taylor St"];
+locations = ["315 E San Fernando", "189 Curtner Ave", "167 E Taylor St"];
   inquirer
     .prompt([
       {
@@ -717,7 +726,6 @@ locations = ["315 E San Fernando", "189 Curtner Av", "167 E Taylor St"];
         type: "input",
         message: "Transmission: "
       },
-
       {
         name: "mileage",
         type: "input",
@@ -734,12 +742,12 @@ locations = ["315 E San Fernando", "189 Curtner Av", "167 E Taylor St"];
       },{
         name: "location",
         type: "list",
-        message: "Choose Location",
+        message: "Choose Location: ",
         choices: locations
       },{
         name: "manager",
         type: "list",
-        message: "Choose Manger",
+        message: "Choose Manager: ",
         choices: managersID
       }      
     ]).then(function(answer) {
@@ -788,7 +796,7 @@ locations = ["315 E San Fernando", "189 Curtner Av", "167 E Taylor St"];
         function(err) {
           if (err) {throw err;}
             
-            console.log("inserted into the car relation!")
+            console.log("Inserted into the car relation!")
             CustomerMain(username); 
          });
 
@@ -800,11 +808,11 @@ function customerRent(username){
       .prompt({
         name: "rentMenu",
         type: "list",
-        message: "what would you like to do",
-        choices: ["List cars", "Filter", "Return"]
+        message: "\nWhat would you like to do",
+        choices: ["List Cars", "Filter", "Return"]
       })
       .then(function(answer) {
-        if (answer.rentMenu == "List cars") {
+        if (answer.rentMenu == "List Cars") {
          rentCars(username);
         } else if(answer.rentMenu == "Filter") {
           console.log("Filter!!!!!!");
@@ -812,7 +820,7 @@ function customerRent(username){
         } else if(answer.rentMenu == "Return") {
           CustomerMain(username);
         } else{
-          console.log("oh no, not good");
+          console.log("Oh no, not good");
         }
       });  
 }
@@ -829,7 +837,7 @@ function customerRentOut(username){
       managersID.push(results[i].mgr_ssn);
     }    
    });
-  locations = ["315 E San Fernando", "189 Curtner Av", "167 E Taylor St"];
+  locations = ["315 E San Fernando", "189 Curtner Ave", "167 E Taylor St"];
   //var maSSN = "123456789";
   var source = 0;
   var purpose = "RENT"
@@ -897,12 +905,12 @@ function customerRentOut(username){
       {
         name: "location",
         type: "list",
-        message: "Choose Location",
+        message: "Choose Location: ",
         choices: locations
       },{
         name: "manager",
         type: "list",
-        message: "Choose Manger",
+        message: "Choose Manager: ",
         choices: managersID
       }      
     ]).then(function(answer) {
@@ -931,7 +939,7 @@ function customerRentOut(username){
           if (err) throw err;
           
           //if no err, will go back to login, now the employee should hit the returning employee. 
-          console.log("Your car was inserted  cars correctly!");
+          console.log("Your car was inserted correctly!");
           // re-prompt the user for if they want to bid or post
         });
         var state = "rent";
@@ -957,7 +965,7 @@ inquirer
       .prompt({
         name: "maintenanceMenu",
         type: "list",
-        message: "what would you like to do",
+        message: "What would you like to do?",
         choices: ["Schedule", "Check Current", "Return"]
       })
       .then(function(answer) {
@@ -1005,13 +1013,13 @@ inquirer
         } else if(answer.maintenanceMenu == "Return") {
           CustomerMain(username);
         } else{
-          console.log("oh no, not good");
+          console.log("Oh no, not good");
         }
       });  
 }
 
 function customerMaintenanceSchedule(username){
-  locations = ["315 E San Fernando", "189 Curtner Av", "167 E Taylor St"];
+  locations = ["315 E San Fernando", "189 Curtner Ave", "167 E Taylor St"];
   services = ["Oil Change", "Tire Rotation","Brake Change","Blinker Fluid","Wheel Alignment","Battery Replacement","Timing Belt Replacement","Water Pump Replacement","Engine Replacement"];
   cars = [];
 
@@ -1028,7 +1036,7 @@ function customerMaintenanceSchedule(username){
       .prompt([{
         name: "maintenanceMenu",
         type: "list",
-        message: "What Service would you like",
+        message: "What Service would you like?",
         choices: services
       },{
         name: "location",
@@ -1043,7 +1051,7 @@ function customerMaintenanceSchedule(username){
       },{
         name: "car",
         type: "list",
-        message: "Select a car by VIN",
+        message: "Select a car by VIN:",
         choices: cars
       }])
       .then(function(answer) {
@@ -1083,7 +1091,7 @@ function customerMaintenanceSchedule(username){
             if (err) throw err;
             
             //if no err, will go back to login, now the employee should hit the returning employee. 
-            console.log('\n' + "Your car was inserted correctly for maintence!");
+            console.log('\n' + "Your car was inserted correctly for maintenance!");
             // re-prompt the user for if they want to bid or post
         });
 
@@ -1095,7 +1103,7 @@ function customerMaintenanceSchedule(username){
         },function(err) {
             if (err) {throw err;}
               
-              console.log("inserted into the car relation!")
+              console.log("Inserted into the car relation!")
               
            });
         CustomerMain(username); 
@@ -1107,7 +1115,7 @@ function customerReview(username){
       .prompt({
         name: "reviewMenu",
         type: "list",
-        message: "What Service would you like",
+        message: "\nWhat Service would you like?",
         choices: ["Check Reviews", "Write Reviews", "Return"]
       })
       .then(function(answer) {
@@ -1119,7 +1127,7 @@ function customerReview(username){
         } else if(answer.reviewMenu == "Return") {
           CustomerMain(username);
         } else{
-          console.log("oh no, not good");
+          console.log("Oh no, not good");
         }
       });
 }
@@ -1129,12 +1137,12 @@ function writeReview(username){
   inquirer.prompt([{
         name: "review",
         type: "input",
-        message: "Please write your review"
+        message: "Please write your review:"
       },
       {
         name: "stars",
         type: "list",
-        message: "How many stars would you rate??",
+        message: "How many stars would you rate the location?",
         choices: ["1","2","3","4","5"]
       },{
         name: "location",
@@ -1142,7 +1150,7 @@ function writeReview(username){
         message: "What location are you at?",
         choices: locations
       }]).then(function(answer) {
-        console.log("here is your review: " + answer.review);
+        console.log("Here is your review: " + answer.review);
         connection.query("INSERT INTO review SET ?",
           {
             stars: answer.stars,
@@ -1153,7 +1161,7 @@ function writeReview(username){
           function(err) {
             if (err) throw err;
             //this is after review has been inserted
-            console.log("you review has been entered");
+            console.log("Your review has been entered!");
             CustomerMain(username);
           });
       });
@@ -1166,7 +1174,7 @@ function checkReview(username){
     .prompt({
       name: "location",
       type: "list",
-      message: "Choose a location",
+      message: "Choose a location:",
       choices: locations
     }).then(function(answer) {
       if(answer.reviews == "Return"){customerReview(username); return}
@@ -1272,20 +1280,20 @@ function removeCar(ssn){
       .prompt({
         name: "cars",
         type: "list",
-        message: "Which Car would you like to remove?",
+        message: "Which car would you like to remove?",
         choices: toDisplay
       }).then(function(answer) {
           var res = answer.cars.split(" ");
-          console.log("this is the vin, for the car you just removed is: " + res[1]);
+          console.log("This is the VIN for the car you just removed: " + res[1]);
           VINBought = res[1];
-           console.log("the vin is: " + VINBought);
+           console.log("The VIN is: " + VINBought);
 
           connection.query(
             "Delete from car where VIN = " + mysql.escape(VINBought),
             function(err) {
               if (err) throw err;
               //if no err, will go back to login, now the employee should hit the returning employee. 
-              console.log("Thanks for buying the car, it is now off of our lot");
+              console.log("Thanks for buying the car, it is now off of our lot!");
               // re-prompt the user for if they want to bid or post
               managerMain(ssn);
             });
@@ -1319,7 +1327,7 @@ function modifyCar(ssn){
       .prompt([{
         name: "cars",
         type: "list",
-        message: "Which Car would you like change the price?",
+        message: "Which car would you like change the price of?",
         choices: toDisplay
       },{
         name: "price",
@@ -1327,15 +1335,15 @@ function modifyCar(ssn){
         message: "What is the new price?"
       }]).then(function(answer) {
           var res = answer.cars.split(" ");
-          console.log("this is the vin, for the car you just selected is: " + res[1]);
+          console.log("This is the VIN for the car you just selected: " + res[1]);
           VINBought = res[1];
-          console.log("the vin is: " + VINBought);
+          console.log("The VIN is: " + VINBought);
           connection.query(
             "UPDATE car SET price = " + mysql.escape(answer.price) + "WHERE VIN = " + mysql.escape(VINBought),
             function(err) {
               if (err) throw err;
               //if no err, will go back to login, now the employee should hit the returning employee. 
-              console.log("The car has been removed from the lot");
+              console.log("The car has been removed from the lot!");
               // re-prompt the user for if they want to bid or post
               managerMain(ssn);
             });
@@ -1369,7 +1377,7 @@ function buyCars(username){
       .prompt({
         name: "cars",
         type: "list",
-        message: "Which Car would you like to buy?",
+        message: "Which car would you like to buy?",
         choices: toDisplay
       }).then(function(answer) {
         if(answer.cars == "Return"){CustomerMain(username); return}
@@ -1381,7 +1389,7 @@ function buyCars(username){
             function(err) {
               if (err) throw err;
               //if no err, will go back to login, now the employee should hit the returning employee. 
-              console.log("Thanks for buying the car, it is now off of our lot");
+              console.log("Thanks for buying the car, it is now off of our lot!");
               // re-prompt the user for if they want to bid or post
             
           var state = "sold"
@@ -1431,7 +1439,7 @@ function rentCars(username){
       .prompt({
         name: "cars",
         type: "list",
-        message: "Which Car would you like to rent?",
+        message: "Which car would you like to rent?",
         choices: toDisplay
       }).then(function(answer) {
         if(answer.cars == "Return"){CustomerMain(username); return}
@@ -1443,7 +1451,7 @@ function rentCars(username){
             function(err) {
               if (err) throw err;
               //if no err, will go back to login, now the employee should hit the returning employee. 
-              console.log("Thanks for renting the car, it is now off of our lot");
+              console.log("Thanks for renting the car, it is now off of our lot!");
               // re-prompt the user for if they want to bid or post
             
           var state = "rentOut"

@@ -1,5 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
+var passwordHash = require('password-hash');
 // create the connection information for the sql database
 var connection = mysql.createConnection({
   host: "localhost",
@@ -682,12 +683,15 @@ function createCustomer(){
     ])
     .then(function(answer) {
       //do some salary logic
+      
+      var hashedPassword = passwordHash.generate(answer.password);
+      console.log("the hashed password is: " + hashedPassword);
 
       connection.query(
         "INSERT INTO customer SET ?",
         {
           username: answer.username,
-          password: answer.password,
+          password: hashedPassword,
           name: answer.name,
           address: answer.address,
           P_number: answer.phone_number
@@ -725,8 +729,10 @@ function CustomerLogin() {
            if (err){
              throw err;
            } 
+           // var hashedPassword = passwordHash.generate(answer.password);
+           // console.log("the hashedPassword is: " + hashedPassword)
           for (var i = 0; i < results.length; i++){
-            if(answer.username == results[i].username && answer.password == results[i].password){
+            if(answer.username == results[i].username && passwordHash.verify(answer.password, results[i].password)) {
                CustomerMain(results[i].username);
                i = results.length++;
             }else {

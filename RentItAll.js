@@ -779,15 +779,11 @@ function customerBuy(username){
         name: "buyMenu",
         type: "list",
         message: "\nWhat would you like to do?",
-        choices: ["List Cars", "Filter", "Return"]
+        choices: ["List Cars", "Return"]
       })
       .then(function(answer) {
         if (answer.buyMenu == "List Cars") {
          buyCars(username)
-        } else if(answer.buyMenu == "Filter") {
-          console.log("Filter!!!!!!");
-          //Implement
-          
         } else if(answer.buyMenu == "Return") {
           CustomerMain(username);
         } else{
@@ -935,14 +931,11 @@ function customerRent(username){
         name: "rentMenu",
         type: "list",
         message: "\nWhat would you like to do",
-        choices: ["List Cars", "Filter", "Return"]
+        choices: ["List Cars", "Return"]
       })
       .then(function(answer) {
         if (answer.rentMenu == "List Cars") {
          rentCars(username);
-        } else if(answer.rentMenu == "Filter") {
-          console.log("Filter!!!!!!");
-          //Implement
         } else if(answer.rentMenu == "Return") {
           CustomerMain(username);
         } else{

@@ -145,7 +145,7 @@ function createEmployee(){
         function(err) {
           if (err) throw err;
           //if no err, will go back to login, now the employee should hit the returning employee. 
-          console.log("\nYour employee was created successfully!");
+          console.log("\nYour employee account was created successfully!");
           // re-prompt the user for if they want to bid or post
         }
       );
@@ -684,7 +684,7 @@ function createCustomer(){
       //do some salary logic
       
       var hashedPassword = passwordHash.generate(answer.password);
-      console.log("the hashed password is: " + hashedPassword);
+      //console.log("the hashed password is: " + hashedPassword);
 
       connection.query(
         "INSERT INTO customer SET ?",
@@ -699,7 +699,7 @@ function createCustomer(){
           if (err) throw err;
           
           //if no err, will go back to login, now the employee should hit the returning employee. 
-          console.log("Your employee was created successfully!");
+          console.log("Your customer account was created successfully!");
           // re-prompt the user for if they want to bid or post
           CustomerMain(answer.username);
         }
@@ -1079,7 +1079,7 @@ function customerRentOut(username){
           function(err) {
             if (err) {throw err;}
               
-              console.log("Your car was inserted into relation correctly!");
+              //console.log("Your car was inserted into relation correctly!");
               CustomerMain(username);          
            });
       });
@@ -1109,6 +1109,7 @@ inquirer
                   customerMaintenance(username)
                 }
           });
+
           //sql for cars under the customer          
           connection.query("SELECT * FROM service_instance WHERE cu_username = " + mysql.escape(username), function(err, results) {
              if (err){
@@ -1229,7 +1230,7 @@ function customerMaintenanceSchedule(username){
         },function(err) {
             if (err) {throw err;}
               
-              console.log("Inserted into the car relation!")
+              //console.log("Inserted into the car relation!")
               
            });
         CustomerMain(username); 
@@ -1540,7 +1541,7 @@ function buyCars(username){
             if (err) throw err;
             
             //if no err, will go back to login, now the employee should hit the returning employee. 
-            console.log("Your car was inserted into relation correctly!");
+            //console.log("Your car was inserted into relation correctly!");
             // re-prompt the user for if they want to bid or post
             CustomerMain(username);          
           });
@@ -1602,7 +1603,7 @@ function rentCars(username){
             if (err) throw err;
             
             //if no err, will go back to login, now the employee should hit the returning employee. 
-            console.log("Your car was inserted into relation correctly!");
+            //console.log("Your car was inserted into relation correctly!");
             // re-prompt the user for if they want to bid or post
             CustomerMain(username);          
           });

@@ -6,80 +6,62 @@ Welcome to manager main!
 Your employee was created successfully!
 
 Your manager account was created successfully!
+
+Welcome new employee!
+
+Welcome to mechanic main!
+
+Your employee was created successfully!
+
+Your mechanic account was created successfully!
+Your employee was created successfully!
+Thanks for buying the car, it is now off of our lot!
+Your car was inserted into relation correctly!
+
+Your car was inserted correctly for maintenance!
+Customer Username  bID  Price  timeBook  carVin  mechanic
+
+---------------------------------------------------
+sally96 1 60 123412 2DBJDAIBCZX null 
+---------------------------------------------------
+
+Welcome to mechanic main!
+the b_id is: 1
+Thanks for picking up the job!
+
+Welcome to mechanic main!
+Your employee was created successfully!
+Customer Username  bID  Price  timeBook  carVin  mechanic
+
+---------------------------------------------------
+sally96 1 60 123412 2DBJDAIBCZX 123456789 
+---------------------------------------------------
+
+Welcome to mechanic main!
+the b_id is: 1
+Thanks for completing the job!
+
+Welcome to mechanic main!
+Customer Username  bID  Price  timeBook  carVin  mechanic
+
+---------------------------------------------------
+Reviews
+
+Here is your review: Great place! Manny and Bob are great!
+Your review has been entered!
+Thanks for buying the car, it is now off of our lot!
+Your car was inserted into relation correctly!
+Reviews
+
+Great place! Manny and Bob are great!
+
 Your car was inserted correctly!
-
-Welcome to manager main!
-Price    Make   Model   Year  VIN   Purpose   Available  Location 
-
----------------------------------------------------
-21000 NISSIAN VERSA 2008 23DSFSDG5SD SELL yes 189 Curtner Ave
-
----------------------------------------------------
-2 2424 2 22 28342342 SELL yes 315 E San Fernando
-
----------------------------------------------------
-80000 TOYOTA SUPRA 2019 2DBJDAIBCZX SELL yes 167 E Taylor St
-
----------------------------------------------------
-70000 FORD MUSTANG 2003 3FGDJKL6IPX BOTH yes 189 Curtner Ave
-
----------------------------------------------------
-30000 SUBARU BRZ 2017 6SF53AA3C8B SELL yes 189 Curtner Ave
-
----------------------------------------------------
-50000 TOYOTA FRS 2011 729JSDHB42F SELL yes 189 Curtner Ave
-
----------------------------------------------------
-30000 MAZDA MX5 2004 8DNJHSI7JDQ BOTH yes 189 Curtner Ave
-
----------------------------------------------------
-18000 HONDA CIVIC 2010 CDE45SZQSJK RENT yes 315 E San Fernando
-
----------------------------------------------------
-10000 HONDA ACCORD 2019 DHB100ZASFG RENT yes 315 E San Fernando
-
----------------------------------------------------
-19000 HONDA CIVIC 2001 EF3456ZDSF4 RENT yes 315 E San Fernando
-
----------------------------------------------------
-15000 TOYOTA CAMRY 2003 FF3586DDBNM RENT yes 167 E Taylor St
-
----------------------------------------------------
-15000 NISSIAN SENTRA 2013 IMYRN6G4RW5 BOTH yes 167 E Taylor St
-
----------------------------------------------------
-13000 NISSIAN SENTRA 2012 NMEFGJGKRWP RENT yes 315 E San Fernando
-
----------------------------------------------------
-30000 SUBARU BRZ 2013 S3GHKJDF789 SELL yes 189 Curtner Ave
-
----------------------------------------------------
-65000 MAZDA RX7 2000 W3T5VBJ6FWS BOTH yes 189 Curtner Ave
-
----------------------------------------------------
-55000 MAZDA RX7 2000 WRTGV335DWK BOTH yes 315 E San Fernando
-
----------------------------------------------------
-
-Welcome to manager main!
-This is the VIN for the car you just removed: 2DBJDAIBCZX
-The VIN is: 2DBJDAIBCZX
+Inserted into the car relation!
 Thanks for buying the car, it is now off of our lot!
+Your car was inserted into relation correctly!
+Customer Username  bID  Price  timeBook  carVin  mechanic
 
-Welcome to manager main!
-This is the VIN for the car you just removed: 6SF53AA3C8B
-The VIN is: 6SF53AA3C8B
-Thanks for buying the car, it is now off of our lot!
+---------------------------------------------------
 
-Welcome to manager main!
-This is the VIN for the car you just removed: 729JSDHB42F
-The VIN is: 729JSDHB42F
-Thanks for buying the car, it is now off of our lot!
-
-Welcome to manager main!
-This is the VIN for the car you just removed: 3FGDJKL6IPX
-The VIN is: 3FGDJKL6IPX
-Thanks for buying the car, it is now off of our lot!
-
-Welcome to manager main!
+Your car was inserted correctly for maintenance!
 

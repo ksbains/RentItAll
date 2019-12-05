@@ -3,7 +3,7 @@ Welcome new employee!
 
 Welcome to manager main!
 
-Your employee was created successfully!
+Your employee account was created successfully!
 
 Your manager account was created successfully!
 
@@ -11,57 +11,53 @@ Welcome new employee!
 
 Welcome to mechanic main!
 
-Your employee was created successfully!
+Your employee account was created successfully!
 
 Your mechanic account was created successfully!
-Your employee was created successfully!
+Your customer account was created successfully!
 Thanks for buying the car, it is now off of our lot!
-Your car was inserted into relation correctly!
+Customer Username  bID  Price  timeBook  carVin  mechanic
+
+---------------------------------------------------
 
 Your car was inserted correctly for maintenance!
 Customer Username  bID  Price  timeBook  carVin  mechanic
 
 ---------------------------------------------------
-sally96 1 60 123412 2DBJDAIBCZX null 
+sally96 1 60 12052019 2DBJDAIBCZX null 
 ---------------------------------------------------
+
+Welcome to mechanic main!
+the b_id is: Return
+Thanks for completing the job!
 
 Welcome to mechanic main!
 the b_id is: 1
 Thanks for picking up the job!
 
 Welcome to mechanic main!
-Your employee was created successfully!
 Customer Username  bID  Price  timeBook  carVin  mechanic
 
 ---------------------------------------------------
-sally96 1 60 123412 2DBJDAIBCZX 123456789 
+sally96 1 60 12052019 2DBJDAIBCZX Bob 
 ---------------------------------------------------
+Your car was inserted correctly!
+Inserted into the car relation!
 
 Welcome to mechanic main!
 the b_id is: 1
 Thanks for completing the job!
 
 Welcome to mechanic main!
-Customer Username  bID  Price  timeBook  carVin  mechanic
-
----------------------------------------------------
-Reviews
-
-Here is your review: Great place! Manny and Bob are great!
+Your customer account was created successfully!
+Thanks for buying the car, it is now off of our lot!
+Here is your review: bob and manny are great!
 Your review has been entered!
-Thanks for buying the car, it is now off of our lot!
-Your car was inserted into relation correctly!
-Reviews
-
-Great place! Manny and Bob are great!
-
-Your car was inserted correctly!
-Inserted into the car relation!
-Thanks for buying the car, it is now off of our lot!
-Your car was inserted into relation correctly!
 Customer Username  bID  Price  timeBook  carVin  mechanic
 
 ---------------------------------------------------
+Reviews
 
-Your car was inserted correctly for maintenance!
+bob and manny are great!
+
 

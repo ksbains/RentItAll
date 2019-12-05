@@ -1111,7 +1111,7 @@ inquirer
           });
 
           //sql for cars under the customer          
-          connection.query("SELECT * FROM service_instance WHERE cu_username = " + mysql.escape(username), function(err, results) {
+          connection.query("SELECT * FROM service_instance LEFT JOIN employee on service_instance.me_ssn = employee.SSN  WHERE cu_username = " + mysql.escape(username), function(err, results) {
              if (err){
                throw err;
              }
@@ -1125,7 +1125,7 @@ inquirer
               toReturn = toReturn + results[i].price + " ";
               toReturn = toReturn + results[i].time_book + " ";
               toReturn = toReturn + results[i].car_VIN + " ";
-              toReturn = toReturn + results[i].me_ssn + " ";
+              toReturn = toReturn + results[i].name + " ";
               toDisplay.push(toReturn);
             }
             toDisplay.unshift(header);
